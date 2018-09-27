@@ -6,6 +6,8 @@ import os
 import model_logic
 
 root_path = str(os.getcwd())
+if root_path == "/root":
+    root_path = "/Users/2017-A/Dropbox/web_dev/modelcraft"
 
 @route('/')
 def root():
@@ -56,8 +58,8 @@ def stylesheet(session_id, level):
 def serve_layout_pdf(session_id):
     return static_file("layout.pdf", root=root_path + "/data/" + session_id, download="layout.pdf")
 
-@route('/laser_cut_image/<session_id>')
-def stylesheet(session_id):
+@route('/cutout_image/<session_id>/<cache_breaker>')
+def stylesheet(session_id, cache_breaker):
     return static_file("cutout.png", root=root_path + "/data/" + session_id)
 
 @route("/download_laser_cut_dxf/<session_id>")
@@ -81,6 +83,6 @@ def corners_graphic():
     return static_file("BoxGraphic.png", root=root_path + "/graphics")
 
 try:
-    run(host='0.0.0.0', port=80, debug=True)
+    run(host='0.0.0.0', port=80, debug=True, server="paste")
 except:
     run(host='localhost', port=8080, debug=True)

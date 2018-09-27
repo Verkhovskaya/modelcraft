@@ -173,11 +173,17 @@ function layout_image_change(change) {
     load_layout_image(current_location_int);
 }
 
+function reload_cutout_image() {
+    let session_id = document.getElementById("session_id").value.toString();
+    document.getElementById("laser_cut_image").src = "/cutout_image/" + session_id + "/" + new Date().getTime();
+}
+
 function display_results() {
     document.getElementById("no_results_laser_cut").style.display = "none";
     document.getElementById("loading_bar_laser_cut").style.display = "none";
     document.getElementById("show_results_laser_cut").style.display = "block";
     load_layout_image(0);
+    reload_cutout_image();
 
     document.getElementById("no_results_build").style.display = "none";
     document.getElementById("loading_bar_build").style.display = "none";

@@ -81,6 +81,7 @@ def generate_cutout_files(root_path, session_id, color_array, type=["dxf"]):
             cutouts_by_color.append(color_cutouts)
     print("Generating dxf")
     generate_dxf(root_path, session_id, cutouts_by_color)
+    generate_png(root_path, session_id, cutouts_by_color)
 
 
 
@@ -217,3 +218,21 @@ def generate_dxf(root_path, session_id, outlines_by_color):
                 end = (line[1][0]+color*(map_x+10), line[1][1]+300*segment_id)
                 drawing.add(dxf.line(start, end, color=7))
     drawing.save()
+
+def generate_png(root_path, session_id, outlines_by_color):
+    length_x = max(max(max(max(point[0] for point in line) for line in segment) for segment in color) for color in outlines_by_color)
+    length_y = max(max(max(max(point[1] for point in line) for line in segment) for segment in color) for color in outlines_by_color)
+    print(length_x, length_y)
+    side_length = 10
+    image = np.zeros(((length_y+2) * side_length, (length_x + 2) * side_length, 3), dtype=np.uint8)
+    for color in range(len(outlines_by_color)):
+        for segment_id in range(len(outlines_by_color[color])):
+            for line in outlines_by_color[color][segment_id]:
+                start = min(line[0][0], line[1][0])+1, min(line[0][1], line[1][1])+1
+                end = max(line[0][0], line[1][0])+1, max(line[0][1], line[1][1])+1
+                image[int(side_length*start[1])-2:int(side_length*end[1])+2,
+                      int(side_length*start[0])-2:int(side_length*end[0])+2] = (255, 255, 255)
+
+    img = Image.fromarray(image, 'RGB')
+    img_name = root_path + "/data/" + session_id + "/cutout.png"
+    img.save(img_name)
