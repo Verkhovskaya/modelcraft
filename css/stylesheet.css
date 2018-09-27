@@ -80,12 +80,34 @@ input {
 	z-index: -1;
 }
 
+.text_input {
+	border:none;
+	background: #c6ffc6;
+	color: #194141;
+	margin:1%;
+	border-radius: 5px;
+	width:30%;
+	outline:none;
+}
+
+.text_input:focus {
+	background-color: #94ff94;
+}
+
+.sticky {
+  position: fixed;
+  top: 0;
+  width: 100%
+}
+
 #div1 {
-	margin-top: -1.15em;
+	position: fixed;
+	margin-top: -2em;
 	width: 105%;
 	background-image: linear-gradient(to bottom right, #bfffdf, #cfffdf, #dfffdf, #efffdf, #ffffdf);
     margin-left: -0.5em;
     padding-left: 0.5em;
+    padding-top:1.7em;
     margin-right: 0;
 }
 
@@ -95,8 +117,17 @@ input {
 	float: none !important;
 	background-color: #bfffdf;
 	padding: 0%;
-    padding-top: 0em;
-    padding-bottom: 2em;
+    padding-top: 2.7em;
+}
+
+#jump1 {
+	padding:1.75em;
+}
+#jump2 {
+	padding:0.75em;
+}
+#jump3 {
+	padding:0.75em;
 }
 
 #image{
@@ -263,6 +294,7 @@ input {
 	padding-left:5%;
 	padding-right:5%;
 	padding-bottom:20%;
+	outline:none;
 	width:100%;
 	white-space:normal;
 	text-align:center;
@@ -280,7 +312,10 @@ input {
 	border: none;
 	background-color: #9dffbd;
 	color: #194141;
-	margin:5%;
+	margin-top:0%;
+	margin-right:3%;
+	margin-left:5%;
+	margin-bottom:0%;
 	padding-top:3%;
 	padding-left:5%;
 	padding-right:5%;
@@ -302,7 +337,11 @@ input {
 	border: none;
 	background-color: #94ff94;
 	color: #194141;
-	margin:5%;
+	outline:none;
+	margin-top:0%;
+	margin-right:3%;
+	margin-left:5%;
+	margin-bottom:0%;
 	padding-top:3%;
 	padding-left:5%;
 	padding-right:5%;
