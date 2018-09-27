@@ -1,4 +1,5 @@
 "use strict";
+
 function show_error_message(location, message) {
     document.getElementById(location + "_error_div").style.display = "block";
     document.getElementById(location + "_error_p").innerHTML = message;
@@ -83,7 +84,7 @@ function finish_step_2() {
 
 function request_render(session_id_file, level_dat_file, region_files, position_file) {
     let form_data = new FormData();
-    form_data.set('session_id_file', level_dat_file);
+    form_data.set('session_id', session_id_file);
     form_data.set('level_dat', level_dat_file);
     form_data.set('position', position_file);
     for (let i=0; i<region_files.length; i++) {
@@ -106,23 +107,26 @@ function render_results() {
     document.getElementById("show_results").style.display = "none";
 
     let session_id = document.getElementById("session_id").value.toString();
-    let session_id_file = new File([session_id],
-        "position.txt", {type: "text/plain",});
+    var session_id_file = new File([session_id],
+        "session_id.txt", {type: "text/plain",});
 
-    let x1 = document.getElementById("x1").value.toString();
-    let y1 = document.getElementById("y1").value.toString();
-    let z1 = document.getElementById("z1").value.toString();
-    let x2 = document.getElementById("x2").value.toString();
-    let y2 = document.getElementById("y2").value.toString();
-    let z2 = document.getElementById("z2").value.toString();
+    let x1 = document.getElementById("x1").value;
+    let x2 = document.getElementById("x2").value;
+    let y1 = document.getElementById("y1").value;
+    let y2 = document.getElementById("y2").value;
+    let z1 = document.getElementById("z1").value;
+    let z2 = document.getElementById("z2").value;
 
-    let position_file = new File([x1 + " " + y1 + " " + z1 + " " + x2 + " " + y2 + " " + z2],
+    let num_text = x1 + " " + y1 + " " + z1 + " " + x2 + " " + y2 + " " + z2;
+
+    let position_file = new File([num_text],
         "position.txt", {type: "text/plain",});
 
     let level_dat_file = document.getElementById("level_dat").files[0];
     let region_files = document.getElementById("region").files;
 
     request_render(session_id_file, level_dat_file, region_files, position_file);
+    return session_id_file;
 }
 
 function display_results() {
