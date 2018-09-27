@@ -1,20 +1,25 @@
 <a name="pick_location">
-    <div id="div2">
-        <h1> Step 2: Pick the object you want to create. </h1>
-        <p> In Minecraft, hit F3, or Fn+F3, or maybe Alt+Fn+F3, to see an info screen. </p>
-        <p> Line 8 (Block: # # #) shows where you are. </p>
-        <p> Imagine a big, invisible box around your object </p>
-        <br/>
+    <div id="div5">
+        <h1 id="step"> Step 2: Choose a location </h1>
+        <p id="subheader"> </p>
+        <p id="substep2"> Pick the map section you want to create. </p>
+        <p id="instructions"> In Minecraft, hit F3, or Fn+F3, or maybe Alt+Fn+F3, to see an info screen. </p>
+        <p id="extra"> Line 8 (Block: # # #) shows where you are. </p>
+        <p id="substep2"> Now find your corners! </p>
+        <p id="instructions"> Imagine a big, invisible box around your map location: </p>
+        <div>
+            <img id="box" src="/root_box"/>
+        </div>
         <form id="pick_location_form">
-            <p> The first corner is at: </p>
-            <p>
+            <p id="instructions"> The first corner is at: </p>
+            <p id="extra">
                 <input id="x1" type="number" value="0"/>
                 <input id="z1" type="number" value="0"/>
                 <input id="y1" type="number" value="0"/>
             </p>
             <br/>
-            <p> The corner on the other side (including upwards!) is at: </p>
-            <p>
+            <p id="instructions"> The corner on the other side (including upwards!) is at: </p>
+            <p id="extra">
                 <input id="x2" type="number" value="10"/>
                 <input id="z2" type="number" value="10"/>
                 <input id="y2" type="number" value="10"/>
@@ -26,6 +31,6 @@
             <p id="pick_location_error_p"> </p>
         </div>
 
-        <button onclick="finish_step_2()">Continue</button>
+        <button id="continue2" onclick="finish_step_2()">Continue</button>
     </div>
 </a>
