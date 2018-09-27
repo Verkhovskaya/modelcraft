@@ -37,7 +37,7 @@ def request_render():
 
 @route('/favicon')
 def favicon():
-    return static_file("favicon.jpeg", root=root_path)
+    return static_file("favicon.jpeg", root=root_path + "/graphics")
 
 @route('/show_layout_pdf/<session_id>')
 def serve_layout_pdf(session_id):
@@ -63,14 +63,13 @@ def stylesheet():
 def stylesheet():
     return static_file("script.js", root=root_path + "/javascript")
 
-@route('/serve_icon/<session_id>')
-def serve_icon(session_id):
-    return static_file("icon.png", root=root_path + "/data/" + session_id + "/map")
-
 @route('/root_image')
 def root_image():
-    return static_file("house.jpeg", root=root_path)
+    return static_file("house.jpeg", root=root_path + "/graphics")
 
+@route('/corners_graphic')
+def corners_graphic():
+    return static_file("BoxGraphic.png", root=root_path + "/graphics")
 
 try:
     run(host='0.0.0.0', port=80, debug=True)

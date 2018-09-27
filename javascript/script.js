@@ -53,7 +53,7 @@ function finish_step_1() {
     let step_1_status = check_step_1();
     if (!(step_1_status == "good")) {
         show_error_message("upload_map", step_1_status);
-        jump_to("upload_map");
+        jump_to("find_your_map");
         return;
     }
 
@@ -65,14 +65,14 @@ function finish_step_2() {
     let step_2_status = check_step_2();
     if (!(step_2_status == "good")) {
         show_error_message("pick_location", step_2_status);
-        jump_to("pick_location");
+        jump_to("select_corners");
         return;
     }
 
     let step_1_status = check_step_1();
     if (!(step_1_status == "good")) {
         show_error_message("upload_map", step_1_status);
-        jump_to("upload_map");
+        jump_to("find_your_map");
         return;
     }
 

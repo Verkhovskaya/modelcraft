@@ -328,4 +328,13 @@ input {
 
 }
 
+.error_message {
+    width: 100%;
+    background-color: red;
+}
+
+.error_message p {
+    padding: 1em;
+    font-weight: bold;
+    color: white;
 }
