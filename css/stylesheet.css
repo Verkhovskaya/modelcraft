@@ -103,12 +103,21 @@ input {
 #div1 {
 	position: fixed;
 	margin-top: -2em;
-	width: 105%;
+	width: 100%;
 	background-image: linear-gradient(to bottom right, #bfffdf, #cfffdf, #dfffdf, #efffdf, #ffffdf);
     margin-left: -0.5em;
     padding-left: 0.5em;
     padding-top:1.7em;
     margin-right: 0;
+}
+
+#title {
+
+}
+
+#contact_info {
+	padding-top: 1em;
+	padding-right: 2em;
 }
 
 #div2{
@@ -145,9 +154,22 @@ input {
 	height:80%;
 }
 
+#layout_image_selection_buttons {
+	margin: auto;
+	width: fit-content;
+}
+
+#download_layout_pdf {
+	margin: auto;
+	width: fit-content;
+}
 #div3 {
 	width: 84%;
 	margin: 0 auto;
+}
+
+#contact_info {
+	float: right;
 }
 
 #div4 {

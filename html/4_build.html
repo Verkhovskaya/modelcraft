@@ -1,28 +1,45 @@
 <a name="results">
 	<div id="div6">
 		<h1 id="step"> Step 4: Build and paint your model</h1>
-		<p id="subheader"> </p>
-		<div id="no_results_build"> <p> NO RESULTS (Please complete parts 1 and 2) </p></div>
+		<p id="instructions"> Your layout: </p>
+		<div id="no_results_build"> <p> NO RESULTS YET (Please complete steps 1 and 2) </p></div>
 		<div id="loading_bar_build" style="display: none"> <p id="instructions"> LOADING BAR </p> </div>
 
 		<div id="show_results_build" style="display: none">
-			<div id="build_images">
-				<div style="display: none" id="layout_image_render_hidden_variables">
-					<form>
-                    	<input id="layout_image_current_location" type="number" value="0"/>
-                    	<input id="layout_image_largest_value" type="number" value="10"/>
-					</form>
-				</div>
-				<img id="layout_image"/>
-			</div>
-			<button id="layout_image_previous" onclick="layout_image_change(-1)"><-</button>
-			<button id="layout_image_next" onclick="layout_image_change(1)">-></button>
 
-			<div id="download_layout_pdf">
-				<form action="/download_layout_pdf/$$session_id$$" target="_blank">
-					<input type="submit" value="Download as pdf" />
-				</form>
+			<br/> <br/>
+
+
+			<div id="image">
+				<div id="build_images">
+					<div style="display: none" id="layout_image_render_hidden_variables">
+						<form>
+							<input id="layout_image_current_location" type="number" value="0"/>
+							<input id="layout_image_largest_value" type="number" value="10"/>
+						</form>
+					</div>
+					<div id="layout_image_div">
+						<img id="layout_image"/>
+					</div>
+				</div>
 			</div>
+
+			<div id="buttons">
+				<button id="layout_image_previous" onclick="layout_image_change(-1)" style="display: none"></button><label for="layout_image_previous" style="margin: 1em; padding: 1em"><<</label>
+				<button id="layout_image_next" onclick="layout_image_change(1)" style="display: none"></button><label for="layout_image_next" style="margin: 1em; padding: 1em">>></label>
+			</div>
+
+			<div style="margin-left: 3em">
+				<form action="/download_layout_pdf/$$session_id$$" target="_blank">
+					<input id="download_layout_pdf_button" type="submit" value="Download as pdf" style="display: none"/>
+				</form>
+				<div>
+					<label for="download_layout_pdf_button">Download as pdf</label>
+				</div>
+			</div>
+			<br/> <br/>
+
+        <p id="substep1"> Have fun! </p>
 		</div>
 	</div>
 </a>

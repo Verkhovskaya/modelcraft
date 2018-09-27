@@ -10,4 +10,4 @@ def render(root_path, session_id_file, level_dat_file, region_files, position_fi
     x1, y1, z1, x2, y2, z2 = str(position_file.file.read()).split(" ")
     block_array = get_array_from_map(root_path, session_id, x1, y1, z1, x2, y2, z2, hollow=True)
     generate_layout_files(root_path, session_id, block_array, type=["pdf"])
-    print(block_array)
+    generate_cutout_files(root_path, session_id, block_array, type=["dxf"])
