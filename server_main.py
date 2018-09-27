@@ -16,7 +16,12 @@ def root():
            open(root_path + "/html/0_description.html", "r").read() + \
            open(root_path + "/html/1_upload_map.html", "r").read() + \
            open(root_path + "/html/2_pick_location.html", "r").read() + \
-           open(root_path + "/html/3_results.html", "r").read() + \
+           open(root_path + "/html/3_laser_cut.html", "r").read()\
+               .replace("$$session_id$$", session_id)\
+               .replace("$$session_id$$", session_id) + \
+           open(root_path + "/html/4_build.html", "r").read()\
+               .replace("$$session_id$$", session_id) \
+               .replace("$$session_id$$", session_id)+ \
            open(root_path + "/html/footer.html", "r").read()
     return text
 
@@ -39,19 +44,23 @@ def request_render():
 def favicon():
     return static_file("favicon.jpeg", root=root_path + "/graphics")
 
-@route('/show_layout_pdf/<session_id>')
-def serve_layout_pdf(session_id):
-    return static_file("layout.pdf", root=root_path)
+@route('/layout_front_page')
+def stylesheet():
+    return static_file("script.js", root=root_path + "/javascript")
 
-@route('/show_cutout_pdf/<session_id>')
-def serve_layout_pdf(session_id):
-    return static_file("layout.pdf", root=root_path)
+@route('/layout_image/<session_id>/<level>')
+def stylesheet(session_id, level):
+    return static_file(str(level) + ".png", root=root_path + "/data/" + session_id + "/layout_images")
 
 @route('/download_layout_pdf/<session_id>')
 def serve_layout_pdf(session_id):
     return static_file("layout.pdf", root=root_path + "/data/" + session_id, download="layout.pdf")
 
-@route("/download_dxf/<session_id>")
+@route('/laser_cut_image/<session_id>')
+def stylesheet(session_id):
+    return static_file("cutout.png", root=root_path + "/data/" + session_id)
+
+@route("/download_laser_cut_dxf/<session_id>")
 def dxf(session_id):
     return static_file("cutout.dxf", root=root_path + "/data/"+session_id, download="cutout.dxf")
 

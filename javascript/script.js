@@ -102,9 +102,13 @@ function request_render(session_id_file, level_dat_file, region_files, position_
 }
 
 function render_results() {
-    document.getElementById("no_results").style.display = "none";
-    document.getElementById("loading_bar").style.display = "block";
-    document.getElementById("show_results").style.display = "none";
+    document.getElementById("no_results_laser_cut").style.display = "none";
+    document.getElementById("loading_bar_build").style.display = "block";
+    document.getElementById("show_results_build").style.display = "none";
+
+    document.getElementById("no_results_build").style.display = "none";
+    document.getElementById("loading_bar_build").style.display = "block";
+    document.getElementById("show_results_build").style.display = "none";
 
     let session_id = document.getElementById("session_id").value.toString();
     var session_id_file = new File([session_id],
@@ -116,6 +120,8 @@ function render_results() {
     let y2 = document.getElementById("y2").value;
     let z1 = document.getElementById("z1").value;
     let z2 = document.getElementById("z2").value;
+
+    document.getElementById("layout_image_largest_value").value = Math.abs(z1-z2)-1;
 
     let num_text = x1 + " " + y1 + " " + z1 + " " + x2 + " " + y2 + " " + z2;
 
@@ -129,8 +135,34 @@ function render_results() {
     return session_id_file;
 }
 
+function load_layout_image(position) {
+    let session_id = document.getElementById("session_id").value.toString();
+    document.getElementById("layout_image").src =
+        "/layout_image/" + session_id + "/" + position.toString();
+}
+
+function layout_image_change(change) {
+    let current_location_form = document.getElementById("layout_image_current_location");
+    let current_location_int = parseInt("0" + current_location_form.value);
+    let max_value = parseInt(document.getElementById("layout_image_largest_value").value);
+    current_location_int += change;
+    if (current_location_int < 0) {
+        current_location_int = max_value;
+    } else if (current_location_int > max_value) {
+        current_location_int = 0;
+    }
+
+    current_location_form.value = current_location_int.toString();
+    load_layout_image(current_location_int);
+}
+
 function display_results() {
-    document.getElementById("no_results").style.display = "none";
-    document.getElementById("loading_bar").style.display = "none";
-    document.getElementById("show_results").style.display = "block";
+    document.getElementById("no_results_laser_cut").style.display = "none";
+    document.getElementById("loading_bar_laser_cut").style.display = "none";
+    document.getElementById("show_results_laser_cut").style.display = "block";
+    load_layout_image(0);
+
+    document.getElementById("no_results_build").style.display = "none";
+    document.getElementById("loading_bar_build").style.display = "none";
+    document.getElementById("show_results_build").style.display = "block";
 }

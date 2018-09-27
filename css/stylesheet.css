@@ -148,7 +148,14 @@ input {
 	font-size:1.5em;
 }
 
-#no_results {
+#no_results_laser_cut {
+	background: #e2ffc6;
+	color: #358b8b;
+	padding:3%;
+	font-size:1.5em;
+}
+
+#no_results_build {
 	background: #e2ffc6;
 	color: #358b8b;
 	padding:3%;
