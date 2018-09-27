@@ -406,3 +406,19 @@ input {
     font-weight: bold;
     color: white;
 }
+
+.layout_image {
+	width: 23%;
+    margin: 1%;
+    border: 0;
+}
+
+#layout_images {
+	padding-right: 1em;
+	padding-left: 1em;
+}
+
+#laser_cut_image_div {
+	margin-left: 1.5em;
+	margin-right: 2em;
+}

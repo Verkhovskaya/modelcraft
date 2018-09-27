@@ -152,25 +152,18 @@ function render_results() {
     return session_id_file;
 }
 
-function load_layout_image(position) {
+function reload_layout_images() {
+    let image_div = document.getElementById("layout_images");
+    image_div.innerHTML = "";
     let session_id = document.getElementById("session_id").value.toString();
-    document.getElementById("layout_image").src =
-        "/layout_image/" + session_id + "/" + position.toString();
-}
-
-function layout_image_change(change) {
-    let current_location_form = document.getElementById("layout_image_current_location");
-    let current_location_int = parseInt("0" + current_location_form.value);
     let max_value = parseInt(document.getElementById("layout_image_largest_value").value);
-    current_location_int += change;
-    if (current_location_int < 0) {
-        current_location_int = max_value;
-    } else if (current_location_int > max_value) {
-        current_location_int = 0;
+    let newImg;
+    for (let i=0; i<=max_value; i++) {
+        newImg = document.createElement("img");
+        newImg.src = "/layout_image/" + session_id + "/" + i.toString() + "/" + new Date().getTime();
+        newImg.className = "layout_image";
+        image_div.appendChild(newImg);
     }
-
-    current_location_form.value = current_location_int.toString();
-    load_layout_image(current_location_int);
 }
 
 function reload_cutout_image() {
@@ -182,7 +175,7 @@ function display_results() {
     document.getElementById("no_results_laser_cut").style.display = "none";
     document.getElementById("loading_bar_laser_cut").style.display = "none";
     document.getElementById("show_results_laser_cut").style.display = "block";
-    load_layout_image(0);
+    reload_layout_images();
     reload_cutout_image();
 
     document.getElementById("no_results_build").style.display = "none";

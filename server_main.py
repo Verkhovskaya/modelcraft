@@ -50,8 +50,8 @@ def favicon():
 def stylesheet():
     return static_file("script.js", root=root_path + "/javascript")
 
-@route('/layout_image/<session_id>/<level>')
-def stylesheet(session_id, level):
+@route('/layout_image/<session_id>/<level>/<cache_breaker>')
+def stylesheet(session_id, level, cache_breaker):
     return static_file(str(level) + ".png", root=root_path + "/data/" + session_id + "/layout_images")
 
 @route('/download_layout_pdf/<session_id>')
