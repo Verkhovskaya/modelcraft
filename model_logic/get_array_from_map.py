@@ -1,3 +1,6 @@
+from external_libraries import pymclevel
+import numpy as np
+import copy
 
 def make_hollow(color_array):
     hollow_array = copy.copy(color_array)
@@ -26,7 +29,7 @@ def get_array_from_map(root_path, session_id, x1, y1, z1, x2, y2, z2, hollow=Tru
     y_diff = y_max - y_min
     z_diff = z_max - z_min
 
-    level = mclevel.fromFile(root_path + "/data/" + session_id + "/map")
+    level = pymclevel.mclevel.fromFile(root_path + "/data/" + session_id + "/map")
 
     block_array = np.zeros((x_diff, y_diff, z_diff))
 
@@ -40,4 +43,3 @@ def get_array_from_map(root_path, session_id, x1, y1, z1, x2, y2, z2, hollow=Tru
         block_array = make_hollow(block_array)
 
     return block_array
-

@@ -119,9 +119,13 @@ function request_render(session_id_file, level_dat_file, region_files, position_
 }
 
 function render_results() {
-    document.getElementById("no_results").style.display = "none";
-    document.getElementById("loading_bar").style.display = "block";
-    document.getElementById("show_results").style.display = "none";
+    document.getElementById("no_results_laser_cut").style.display = "none";
+    document.getElementById("loading_bar_build").style.display = "block";
+    document.getElementById("show_results_build").style.display = "none";
+
+    document.getElementById("no_results_build").style.display = "none";
+    document.getElementById("loading_bar_build").style.display = "block";
+    document.getElementById("show_results_build").style.display = "none";
 
     let session_id = document.getElementById("session_id").value.toString();
     var session_id_file = new File([session_id],
@@ -133,6 +137,8 @@ function render_results() {
     let y2 = document.getElementById("y2").value;
     let z1 = document.getElementById("z1").value;
     let z2 = document.getElementById("z2").value;
+
+    document.getElementById("layout_image_largest_value").value = Math.abs(z1-z2)-1;
 
     let num_text = x1 + " " + y1 + " " + z1 + " " + x2 + " " + y2 + " " + z2;
 
@@ -146,8 +152,33 @@ function render_results() {
     return session_id_file;
 }
 
+function reload_layout_images() {
+    let image_div = document.getElementById("layout_images");
+    image_div.innerHTML = "";
+    let session_id = document.getElementById("session_id").value.toString();
+    let max_value = parseInt(document.getElementById("layout_image_largest_value").value);
+    let newImg;
+    for (let i=0; i<=max_value; i++) {
+        newImg = document.createElement("img");
+        newImg.src = "/layout_image/" + session_id + "/" + i.toString() + "/" + new Date().getTime();
+        newImg.className = "layout_image";
+        image_div.appendChild(newImg);
+    }
+}
+
+function reload_cutout_image() {
+    let session_id = document.getElementById("session_id").value.toString();
+    document.getElementById("laser_cut_image").src = "/cutout_image/" + session_id + "/" + new Date().getTime();
+}
+
 function display_results() {
-    document.getElementById("no_results").style.display = "none";
-    document.getElementById("loading_bar").style.display = "none";
-    document.getElementById("show_results").style.display = "block";
+    document.getElementById("no_results_laser_cut").style.display = "none";
+    document.getElementById("loading_bar_laser_cut").style.display = "none";
+    document.getElementById("show_results_laser_cut").style.display = "block";
+    reload_layout_images();
+    reload_cutout_image();
+
+    document.getElementById("no_results_build").style.display = "none";
+    document.getElementById("loading_bar_build").style.display = "none";
+    document.getElementById("show_results_build").style.display = "block";
 }

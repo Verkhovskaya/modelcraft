@@ -6,6 +6,8 @@ import os
 import model_logic
 
 root_path = str(os.getcwd())
+if root_path == "/root":
+    root_path = "/Users/2017-A/Dropbox/web_dev/modelcraft"
 
 @route('/')
 def root():
@@ -16,7 +18,12 @@ def root():
            open(root_path + "/html/0_description.html", "r").read() + \
            open(root_path + "/html/1_upload_map.html", "r").read() + \
            open(root_path + "/html/2_pick_location.html", "r").read() + \
-           open(root_path + "/html/3_results.html", "r").read() + \
+           open(root_path + "/html/3_laser_cut.html", "r").read()\
+               .replace("$$session_id$$", session_id)\
+               .replace("$$session_id$$", session_id) + \
+           open(root_path + "/html/4_build.html", "r").read()\
+               .replace("$$session_id$$", session_id) \
+               .replace("$$session_id$$", session_id)+ \
            open(root_path + "/html/footer.html", "r").read()
     return text
 
@@ -39,19 +46,23 @@ def request_render():
 def favicon():
     return static_file("favicon.jpeg", root=root_path + "/graphics")
 
-@route('/show_layout_pdf/<session_id>')
-def serve_layout_pdf(session_id):
-    return static_file("layout.pdf", root=root_path)
+@route('/layout_front_page')
+def stylesheet():
+    return static_file("script.js", root=root_path + "/javascript")
 
-@route('/show_cutout_pdf/<session_id>')
-def serve_layout_pdf(session_id):
-    return static_file("layout.pdf", root=root_path)
+@route('/layout_image/<session_id>/<level>/<cache_breaker>')
+def stylesheet(session_id, level, cache_breaker):
+    return static_file(str(level) + ".png", root=root_path + "/data/" + session_id + "/layout_images")
 
 @route('/download_layout_pdf/<session_id>')
 def serve_layout_pdf(session_id):
     return static_file("layout.pdf", root=root_path + "/data/" + session_id, download="layout.pdf")
 
-@route("/download_dxf/<session_id>")
+@route('/cutout_image/<session_id>/<cache_breaker>')
+def stylesheet(session_id, cache_breaker):
+    return static_file("cutout.png", root=root_path + "/data/" + session_id)
+
+@route("/download_laser_cut_dxf/<session_id>")
 def dxf(session_id):
     return static_file("cutout.dxf", root=root_path + "/data/"+session_id, download="cutout.dxf")
 
@@ -72,6 +83,6 @@ def corners_graphic():
     return static_file("BoxGraphic.png", root=root_path + "/graphics")
 
 try:
-    run(host='0.0.0.0', port=80, debug=True)
+    run(host='0.0.0.0', port=80, debug=True, server="paste")
 except:
     run(host='localhost', port=8080, debug=True)
