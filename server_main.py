@@ -21,6 +21,7 @@ def root():
            open(root_path + "/html/3_laser_cut.html", "r").read()\
                .replace("$$session_id$$", session_id)\
                .replace("$$session_id$$", session_id) + \
+           open(root_path + "/html/advanced_settings.html", "r").read() + \
            open(root_path + "/html/4_build.html", "r").read()\
                .replace("$$session_id$$", session_id) \
                .replace("$$session_id$$", session_id)+ \
@@ -33,10 +34,23 @@ def request_render():
     level_dat_file = request.files["level_dat"]
     session_id_file = request.files["session_id"]
     position_file = request.files["position"]
-    region_file_names = filter(lambda x: x not in ["level_dat", "session_id", "position"], request.files.keys())
+    settings_file = request.files["settings"]
+    region_file_names = filter(lambda x: x not in ["level_dat", "session_id", "position", "settings"], request.files.keys())
     region_files = [request.files[x] for x in region_file_names]
 
-    model_logic.render(root_path, session_id_file, level_dat_file, region_files, position_file)
+    model_logic.render(root_path, session_id_file, level_dat_file, region_files, position_file, settings_file)
+
+
+@route('/available_cutouts/<session_id>/<cache_breaker>')
+def stylesheet(session_id, cache_breaker):
+    cutout_file_names = os.listdir(root_path + "/data/" + session_id + "/cutout_images")
+    cutouts = {}
+    for name in cutout_file_names:
+        color_id, sheet_id, _ = name.split("_")
+        if color_id not in cutouts.keys():
+            cutouts[color_id] = []
+        cutouts[color_id].append(sheet_id)
+    return {"data": cutouts}
 
 
 #----------------------- Serve files
@@ -58,9 +72,9 @@ def stylesheet(session_id, level, cache_breaker):
 def serve_layout_pdf(session_id):
     return static_file("layout.pdf", root=root_path + "/data/" + session_id, download="layout.pdf")
 
-@route('/cutout_image/<session_id>/<cache_breaker>')
-def stylesheet(session_id, cache_breaker):
-    return static_file("cutout.png", root=root_path + "/data/" + session_id)
+@route('/cutout_image/<session_id>/<color_id>/<sheet_id>/<cache_breaker>')
+def stylesheet(session_id, color_id, sheet_id, cache_breaker):
+    return static_file(color_id + "_" + sheet_id + "_cutout.png", root=root_path + "/data/" + session_id + "/cutout_images")
 
 @route("/download_laser_cut_dxf/<session_id>")
 def dxf(session_id):

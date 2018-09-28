@@ -99,11 +99,12 @@ function finish_step_2() {
     render_results();
 }
 
-function request_render(session_id_file, level_dat_file, region_files, position_file) {
+function request_render(session_id_file, level_dat_file, region_files, position_file, settings_file) {
     let form_data = new FormData();
     form_data.set('session_id', session_id_file);
     form_data.set('level_dat', level_dat_file);
     form_data.set('position', position_file);
+    form_data.set('settings', settings_file);
     for (let i=0; i<region_files.length; i++) {
         form_data.set(i.toString(), region_files[i]);
     }
@@ -127,8 +128,7 @@ function render_results() {
     document.getElementById("loading_bar_build").style.display = "block";
     document.getElementById("show_results_build").style.display = "none";
 
-    let session_id = document.getElementById("session_id").value.toString();
-    var session_id_file = new File([session_id],
+    var session_id_file = new File([get_session_id()],
         "session_id.txt", {type: "text/plain",});
 
     let x1 = document.getElementById("x1").value;
@@ -145,30 +145,38 @@ function render_results() {
     let position_file = new File([num_text],
         "position.txt", {type: "text/plain",});
 
+    let width = document.getElementById("width").value;
+    let length = document.getElementById("length").value;
+    let thickness = document.getElementById("thickness").value;
+    let tab_size = document.getElementById("tab_size").value;
+    let section_size = document.getElementById("section_size").value;
+    let settings_text = width + " " + length + " " + thickness + " " + tab_size + " " + section_size;
+
+    let settings_file = new File([settings_text],
+        "settings.txt", {type: "text/plain",});
+
     let level_dat_file = document.getElementById("level_dat").files[0];
     let region_files = document.getElementById("region").files;
 
-    request_render(session_id_file, level_dat_file, region_files, position_file);
+    request_render(session_id_file, level_dat_file, region_files, position_file, settings_file);
     return session_id_file;
 }
 
 function reload_layout_images() {
     let image_div = document.getElementById("layout_images");
     image_div.innerHTML = "";
-    let session_id = document.getElementById("session_id").value.toString();
     let max_value = parseInt(document.getElementById("layout_image_largest_value").value);
     let newImg;
     for (let i=0; i<=max_value; i++) {
         newImg = document.createElement("img");
-        newImg.src = "/layout_image/" + session_id + "/" + i.toString() + "/" + new Date().getTime();
+        newImg.src = "/layout_image/" + get_session_id() + "/" + i.toString() + "/" + cache_breaker();
         newImg.className = "layout_image";
         image_div.appendChild(newImg);
     }
 }
 
-function reload_cutout_image() {
-    let session_id = document.getElementById("session_id").value.toString();
-    document.getElementById("laser_cut_image").src = "/cutout_image/" + session_id + "/" + new Date().getTime();
+function get_session_id() {
+    return document.getElementById("session_id").value.toString();
 }
 
 function display_results() {
@@ -176,9 +184,69 @@ function display_results() {
     document.getElementById("loading_bar_laser_cut").style.display = "none";
     document.getElementById("show_results_laser_cut").style.display = "block";
     reload_layout_images();
-    reload_cutout_image();
+    reload_cutout_images();
 
     document.getElementById("no_results_build").style.display = "none";
     document.getElementById("loading_bar_build").style.display = "none";
     document.getElementById("show_results_build").style.display = "block";
+}
+
+function cache_breaker() {
+    return new Date().getTime();
+}
+
+function toggle_advanced_settings() {
+    let settings = document.getElementById("advanced_settings");
+    if (settings.style.display === "none") {
+        settings.style.display = "block";
+    } else {
+        settings.style.display = "none";
+    }
+}
+
+function render_color_section(color_id) {
+    let location = document.getElementById("cutout_images");
+    let new_div = document.createElement('div');
+    new_div.className = "color_section";
+    new_div.id = "color_" + color_id.toString();
+    location.appendChild(new_div);
+
+    let title = document.createElement('h1');
+    title.appendChild(document.createTextNode("Color " + color_id.toString()));
+    // new_div.appendChild(title);
+}
+
+function render_sheet(color_id, sheet_id) {
+    let div = document.getElementById("color_" + color_id.toString());
+    let new_image = document.createElement('img');
+    new_image.src = "/cutout_image/" + get_session_id() + "/" + color_id.toString() + "/" + sheet_id.toString() + "/" + cache_breaker();
+    div.appendChild(new_image);
+}
+
+
+function reload_cutout_images() {
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.onreadystatechange = function() {
+        if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+            let cutout_info = JSON.parse(xmlHttp.responseText);
+            let iter1, iter2, color, sheet;
+            let location = document.getElementById("cutout_images");
+            location.innerHTML = "";
+            console.log(cutout_info);
+            for (iter1 in Object.keys(cutout_info.data)) {
+                color = Object.keys(cutout_info.data)[iter1];
+                render_color_section(color);
+                console.log(color);
+                var cutout = cutout_info;
+                console.log(cutout_info.data[color]);
+                for (iter2 in cutout_info.data[color]) {
+                    sheet = cutout_info.data[color][iter2];
+                    console.log("Rendering sheet");
+                    render_sheet(color, sheet);
+                }
+            }
+        }
+    }
+    xmlHttp.open("GET", "/available_cutouts/" + get_session_id() + "/" + cache_breaker(), true); // true for asynchronous
+    xmlHttp.send(null);
 }

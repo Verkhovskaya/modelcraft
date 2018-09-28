@@ -24,7 +24,7 @@ def draw_level(pixel_size, color_array):
     return image
 
 
-def generate_layout_files(root_path, session_id, block_array, type=["pdf"]):
+def generate_layout_files(root_path, session_id, block_array, section_size, type=["pdf"]):
     image_paths = generate_layout_images(root_path, session_id, block_array)
     generate_layout_pdf(root_path, session_id, image_paths)
 
