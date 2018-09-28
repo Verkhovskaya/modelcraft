@@ -70,31 +70,31 @@ function finish_step_1() {
     let step_1_status = check_step_1();
     if (!(step_1_status == "good")) {
         show_error_message("upload_map", step_1_status);
-        jump_to("find_your_map");
+        jump_to("jump1");
         return;
     }
 
     hide_error_message("upload_map");
-    jump_to("pick_location");
+    jump_to("jump2");
 }
 
 function finish_step_2() {
     let step_2_status = check_step_2();
     if (!(step_2_status == "good")) {
         show_error_message("pick_location", step_2_status);
-        jump_to("select_corners");
+        jump_to("jump2");
         return;
     }
 
     let step_1_status = check_step_1();
     if (!(step_1_status == "good")) {
         show_error_message("upload_map", step_1_status);
-        jump_to("find_your_map");
+        jump_to("jump1");
         return;
     }
 
     hide_error_message("upload_map");
-    hide_error_message("pick_location");
+    hide_error_message("jump3");
 
     render_results();
 }

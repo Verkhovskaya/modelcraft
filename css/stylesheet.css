@@ -247,6 +247,16 @@ input {
     padding-bottom: 2em;
 }
 
+#div6 {
+	width: 80%;
+	margin: 0em auto !important;
+	float: none !important;
+	background-color: #ffffdf;
+	padding: 0%;
+    padding-top: .1em;
+    padding-bottom: 2em;
+}
+
 #description{
 	padding:1em;
 	background-color: #194141;
