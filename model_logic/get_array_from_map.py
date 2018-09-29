@@ -1,6 +1,7 @@
-from external_libraries import pymclevel
+from external_libraries import pymclevel, pymclevel2_13
 import numpy as np
 import copy
+
 
 def make_hollow(color_array):
     hollow_array = copy.copy(color_array)
@@ -17,11 +18,15 @@ def make_hollow(color_array):
     return hollow_array
 
 
+class AttributeHolder():
+    pass
+
+
 def get_array_from_map(root_path, session_id, x1, y1, z1, x2, y2, z2, hollow=True):
-    x_min = min(int(x1), int(x2)) - 1
-    x_max = max(int(x1), int(x2)) + 1
-    y_min = min(int(y1), int(y2)) - 1
-    y_max = max(int(y1), int(y2)) + 1
+    x_min = min(int(x1), int(x2))
+    x_max = max(int(x1), int(x2))
+    y_min = min(int(y1), int(y2))
+    y_max = max(int(y1), int(y2))
     z_min = min(int(z1), int(z2))
     z_max = max(int(z1), int(z2))
 
@@ -29,17 +34,51 @@ def get_array_from_map(root_path, session_id, x1, y1, z1, x2, y2, z2, hollow=Tru
     y_diff = y_max - y_min
     z_diff = z_max - z_min
 
-    level = pymclevel.mclevel.fromFile(root_path + "/data/" + session_id + "/map")
+    try:
+        level = pymclevel.mclevel.fromFile(root_path + "/data/" + session_id + "/map")
+        block_array = np.zeros((x_diff, y_diff, z_diff))
+        for x in range(x_min, x_max):
+            for y in range(y_min, y_max):
+                chunk = level.getChunk(x / 16, y / 16)
+                block = chunk.Blocks[x % 16, y % 16, z_min:z_max].astype(int)
+                block_array[x - x_min, y - y_min, :] = block
+        if hollow:
+            block_array = make_hollow(block_array)
+        return block_array
 
-    block_array = np.zeros((x_diff, y_diff, z_diff))
+    except Exception as e:
+        world = AttributeHolder()
+        world.materials = pymclevel2_13.materials.BlockstateMaterials()
+        # setattr(world, 'materials', anvil2.BlockstateMaterials())
+        # 10_10_chunks_per_region
+        #  16_16_chunk
 
-    for x in range(x_min, x_max):
-        for y in range(y_min, y_max):
-            chunk = level.getChunk(x / 16, y / 16)
-            block = chunk.Blocks[x % 16, y % 16, z_min:z_max].astype(int)
-            block_array[x - x_min, y - y_min, :] = block
+        regions = {}
+        chunks = {}
 
-    if hollow:
-        block_array = make_hollow(block_array)
+        block_array = np.zeros((x_diff, y_diff, z_diff))
 
-    return block_array
+        for x in range(x_min, x_max):
+            for y in range(y_min, y_max):
+                region_x = x/160
+                region_y = y/160
+                if (region_x, region_y) not in regions.keys():
+                    world = AttributeHolder()
+                    world.materials = pymclevel2_13.anvil2.BlockstateMaterials()
+                    regions[(region_x, region_y)] = pymclevel2_13.anvil2.BlockstateRegionFile(world,
+                        root_path + "/data/" + session_id + "/map/region/r." + str(region_x) + "." + str(region_y) + ".mca")
+
+                chunk_x = x % 10
+                chunk_y = y % 10
+                if (region_x, region_y, chunk_x, chunk_y) not in chunks.keys():
+                    to_string = np.vectorize(lambda x: str(x))
+                    try:
+                        chunk = regions[(region_x, region_y)].getChunk(chunk_x, chunk_y)
+                        block_names = to_string(chunk.Blocks[chunk_x, z_min: z_max, chunk_y])
+                        print block_names
+                        blocks = block_names != 'air'
+                        block_array[x-x_min, y-y_min, :] = blocks
+                    except AttributeError as e:
+                        print("Could not find region " + str((region_x, region_y)) +", chunk " + str((chunk_x, chunk_y)))
+
+        return block_array

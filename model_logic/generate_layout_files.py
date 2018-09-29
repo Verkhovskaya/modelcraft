@@ -13,14 +13,14 @@ def draw_level(pixel_size, color_array):
     pixel_size = pixel_size/3
     down = max(color_array.shape[0], color_array.shape[1])
     across = min(color_array.shape[0], color_array.shape[1])
-    image = np.zeros(((down+1) * pixel_size, (across + 1) * pixel_size, 3), dtype=np.uint8) + 100
+    image = np.zeros(((down) * pixel_size, (across) * pixel_size, 3), dtype=np.uint8) + 100
     for x in range(color_array.shape[0]):
         for y in range(color_array.shape[1]):
             if color_array.shape[1] > color_array.shape[0]:
                 down, across = y,x
             else:
                 down, across = x,y
-            image[down * pixel_size + 5:(down + 1) * pixel_size + 5, across * pixel_size + 5:(across + 1) * pixel_size + 5] = colors[int(color_array[x, y])]
+            image[down * pixel_size:(down + 1) * pixel_size, across * pixel_size:(across + 1) * pixel_size] = colors[int(color_array[x, y])]
     return image
 
 

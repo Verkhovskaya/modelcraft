@@ -96,6 +96,10 @@ def root_image():
 def corners_graphic():
     return static_file("BoxGraphic.png", root=root_path + "/graphics")
 
+@route('/sitemap')
+def corners_graphic():
+    return static_file("sitemap.xml", root=root_path)
+
 try:
     run(host='0.0.0.0', port=80, debug=True, server="paste")
 except:

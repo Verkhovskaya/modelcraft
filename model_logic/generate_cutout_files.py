@@ -20,7 +20,7 @@ colors = {0: (255, 255, 255), 1: (139,105,20), 2: (0, 0, 255), 3: (100, 100, 100
 def generate_laser_cut_files(root_path, session_id, block_array_one_color, color_id, material_width, material_length, side_length, section_size, tab_size, type=["dxf"]):
     units_x = int(material_length/side_length) - 2
     units_y = int(material_width/side_length) - 2
-    max_size = 30
+    max_size = int(section_size/side_length)
 
     image_directory = root_path + "/data/" + session_id + "/cutout_images"
     if os.path.exists(image_directory):
@@ -39,9 +39,9 @@ def generate_laser_cut_files(root_path, session_id, block_array_one_color, color
         print(cutouts_placed_by_sheets)
         cutouts_in_sheet = list(cutouts_placed_by_sheets[sheet_id-1])
         lines = get_outlines(cutouts_in_sheet)
-        #outlines_with_tabs = add_tabs(outlines)
-        generate_png(root_path, session_id, color_id, sheet_id, units_x, units_y, 10, lines)
-        for line in lines:
+        lines_with_tabs = add_tabs(lines, tab_size/side_length)
+        generate_png(root_path, session_id, color_id, sheet_id, units_x, units_y, 10, lines_with_tabs)
+        for line in lines_with_tabs:
             all_lines.append(((line[0][0]*side_length, line[0][1]*side_length+(sheet_id-1)*material_width*1.2),
                               (line[1][0]*side_length, line[1][1]*side_length+(sheet_id-1)*material_width*1.2)))
     generate_dxf(root_path, session_id, all_lines)
@@ -93,6 +93,36 @@ def get_cutouts(map_sections):
                         cutouts.append(cutout_array)
     return cutouts
 
+
+def add_tabs(lines, tab_unit_size):
+    original_lines = set(lines)
+    new_lines = []
+    for line in lines:
+        print("Line: " + str(line))
+        line_vector = ((line[1][0]-line[0][0]), (line[1][1]-line[0][1]))
+        print("Line vector: " + str(line_vector))
+        print("Tab size: " + str(tab_unit_size))
+        if line_vector[1] == 0:
+            if ((line[0][0], line[0][1]), (line[0][0], line[0][1]+1)) in original_lines or \
+                ((line[0][0], line[0][1]+1), (line[0][0], line[0][1])) in original_lines:
+                new_lines.append(((line[0][0], line[0][1]),\
+                    (line[0][0]+line_vector[0]*(1-tab_unit_size)/2, line[0][1]+line_vector[1]*(1-tab_unit_size)/2)))
+                new_lines.append(((line[1][0], line[1][1]), \
+                                 (line[1][0] - line_vector[0] * (1 - tab_unit_size) / 2,
+                                  line[1][1] - line_vector[1] * (1 - tab_unit_size) / 2)))
+            else:
+                if random.random()*4 < 1:
+                    new_lines.append(((line[0][0], line[0][1]),\
+                        (line[0][0]+line_vector[0]*(1-tab_unit_size)/2, line[0][1]+line_vector[1]*(1-tab_unit_size)/2)))
+                    new_lines.append(((line[1][0], line[1][1]), \
+                                     (line[1][0] - line_vector[0] * (1 - tab_unit_size) / 2,
+                                      line[1][1] - line_vector[1] * (1 - tab_unit_size) / 2)))
+                else:
+                    new_lines.append(line)
+        else:
+            new_lines.append(line)
+
+    return new_lines
 """
 def place_basic(cutouts, units_x, units_y):
     for x in range(mask_array.shape[0]/segment_size+1):
