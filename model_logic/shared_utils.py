@@ -1,7 +1,9 @@
 
-def set_render_state(root_path, session_id, new_state):
-    render_state_file = open(root_path, + "/data/" + session_id + "/render_state.txt", "w")
-    render_state_file.write(new_state)
+def set_render_state(root_path, session_id, new_state, load_progression):
+    if open(root_path + "/data/" + session_id + "/render_state.txt", "r").read() == "Stop previous thread\n0":
+        raise Exception("Stopping thread")
+    render_state_file = open(root_path + "/data/" + session_id + "/render_state.txt", "w")
+    render_state_file.write(new_state+"\n"+str(load_progression))
     render_state_file.close()
 
 
@@ -35,3 +37,15 @@ def get_sections(block_array, section_locations):
 
     print(x_cuts, y_cuts)
     return map_sections
+
+
+def label_start_thread(root_path, session_id):
+    thread_file = open(root_path + "/data/" + session_id + "/render_state.txt", "w")
+    thread_file.write("Request render\n0")
+    thread_file.close()
+
+
+def request_stop_thread(root_path, session_id):
+    thread_file = open(root_path + "/data/" + session_id + "/render_state.txt", "w")
+    thread_file.write("Stop previous thread\n0")
+    thread_file.close()

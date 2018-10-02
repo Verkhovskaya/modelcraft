@@ -112,7 +112,12 @@ function request_render(session_id_file, level_dat_file, region_files, position_
     let xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
          if (this.readyState == 4 && this.status == 200) {
-             display_results();
+             console.log("Thread started");
+             let laser_cut_load_text = document.getElementById("loading_text_laser_cut");
+             let layout_load_text = document.getElementById("loading_text_layout");
+             laser_cut_load_text.innerHTML = "Requesting render";
+             layout_load_text.innerHTML = "Requesting render";
+             wait_for_render();
          }
     };
     xhttp.open("POST", "/request_render", true);
@@ -121,12 +126,12 @@ function request_render(session_id_file, level_dat_file, region_files, position_
 
 function render_results() {
     document.getElementById("no_results_laser_cut").style.display = "none";
-    document.getElementById("loading_bar_laser_cut").style.display = "block";
+    document.getElementById("loading_laser_cut").style.display = "block";
     document.getElementById("show_results_laser_cut").style.display = "none";
 
-    document.getElementById("no_results_build").style.display = "none";
-    document.getElementById("loading_bar_build").style.display = "block";
-    document.getElementById("show_results_build").style.display = "none";
+    document.getElementById("no_results_layout").style.display = "none";
+    document.getElementById("loading_layout").style.display = "block";
+    document.getElementById("show_results_layout").style.display = "none";
 
     var session_id_file = new File([get_session_id()],
         "session_id.txt", {type: "text/plain",});
@@ -179,16 +184,19 @@ function get_session_id() {
     return document.getElementById("session_id").value.toString();
 }
 
-function display_results() {
-    document.getElementById("no_results_laser_cut").style.display = "none";
-    document.getElementById("loading_bar_laser_cut").style.display = "none";
-    document.getElementById("show_results_laser_cut").style.display = "block";
-    reload_layout_images();
-    reload_cutout_images();
 
-    document.getElementById("no_results_build").style.display = "none";
-    document.getElementById("loading_bar_build").style.display = "none";
-    document.getElementById("show_results_build").style.display = "block";
+function display_layout_results() {
+    reload_layout_images();
+    document.getElementById("no_results_layout").style.display = "none";
+    document.getElementById("loading_layout").style.display = "none";
+    document.getElementById("show_results_layout").style.display = "block";
+}
+
+function display_laser_cut_results() {
+    reload_cutout_images();
+    document.getElementById("no_results_laser_cut").style.display = "none";
+    document.getElementById("loading_laser_cut").style.display = "none";
+    document.getElementById("show_results_laser_cut").style.display = "block";
 }
 
 function cache_breaker() {
@@ -249,4 +257,49 @@ function reload_cutout_images() {
     }
     xmlHttp.open("GET", "/available_cutouts/" + get_session_id() + "/" + cache_breaker(), true); // true for asynchronous
     xmlHttp.send(null);
+}
+
+var stop = false;
+function wait_for_render() {
+    let update_load_bar = setTimeout(function tick() {
+        console.log('tick');
+        if (stop) {
+            return;
+        }
+
+        let laser_cut_loading = document.getElementById("loading_laser_cut");
+        if (laser_cut_loading.style.display == "block") {
+            var xmlHttp = new XMLHttpRequest();
+            xmlHttp.onreadystatechange = function () {
+                if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+                    let state = xmlHttp.responseText.split("\n");
+                    console.log(state);
+                    let state_text = state[0];
+                    let state_load = parseInt(state[1]);
+                    if (state_load > 20) {
+                        let layout_display = document.getElementById("show_results_layout");
+                        if (layout_display.style.display != "block") {
+                            display_layout_results();
+                        }
+                    }
+                    if (state_load == 100) {
+                        display_laser_cut_results();
+                        return;
+                    }
+                    let laser_cut_bar = document.getElementById("loading_bar_laser_cut");
+                    let layout_bar = document.getElementById("loading_bar_layout");
+                    laser_cut_bar.style.width = state_load.toString() + "%";
+                    layout_bar.style.width = state_load.toString() + "%";
+                    let laser_cut_load_text = document.getElementById("loading_text_laser_cut");
+                    let layout_load_text = document.getElementById("loading_text_layout");
+                    laser_cut_load_text.innerHTML = state_text;
+                    layout_load_text.innerHTML = state_text;
+                }
+            }
+            xmlHttp.open("GET", "/render_state/" + get_session_id() + "/" + cache_breaker(), true); // true for asynchronous
+            xmlHttp.send(null);
+
+            update_load_bar = setTimeout(tick, 2000); // (*)
+        }
+    }, 2000);
 }

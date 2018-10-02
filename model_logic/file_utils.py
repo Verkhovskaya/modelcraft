@@ -2,6 +2,16 @@ import os
 import shutil
 
 
+def create_session(root_path, session_id):
+    data_directory = root_path + "/data"
+    if not os.path.exists(data_directory):
+        os.mkdir(data_directory)
+
+    session_directory = data_directory + "/" + session_id
+    if not os.path.exists(session_directory):
+        os.mkdir(session_directory)
+
+
 def save_files(root_path, session_id, level_dat_file, region_files, position_file, settings_file):
     if not position_file:
         raise Exception("Missing position file")
@@ -12,13 +22,7 @@ def save_files(root_path, session_id, level_dat_file, region_files, position_fil
     if not settings_file:
         raise Exception("Missing settings file")
 
-    data_directory = root_path + "/data"
-    if not os.path.exists(data_directory):
-        os.mkdir(data_directory)
-
-    session_directory = data_directory + "/" + session_id
-    if not os.path.exists(session_directory):
-        os.mkdir(session_directory)
+    session_directory = root_path + "/data/" + session_id
 
     if os.path.isfile(session_directory + "/position.txt"):
             os.remove(session_directory + "/position.txt")

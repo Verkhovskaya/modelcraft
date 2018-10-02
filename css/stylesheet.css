@@ -256,19 +256,24 @@ input {
 	font-weight: 100
 }
 
-#instructions {
+#instructions, #loading_text_laser_cut, #loading_text_layout {
 	padding-top:3%;
 	padding-left: 3%;
 	font-weight: 400;
 	font-size:1.3em;
 }
 
-#loading_bar {
-	padding-top:3%;
-	padding-left: 3%;
-	padding-bottom:50em;
-	font-weight: 400;
-	font-size:1.3em;
+#loading_bar_laser_cut, #loading_bar_layout {
+	background-color: red;
+	height: 100%;
+}
+
+#loading_bar_frame {
+	margin-left: 10%;
+	width: 80%;
+	height: 2em;
+	background-color: white;
+	margin-top: 1.5em;
 }
 
 #level_dat{

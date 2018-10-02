@@ -4,6 +4,8 @@ import sys
 import time
 import os
 import model_logic
+import threading
+from model_logic import file_utils
 
 root_path = str(os.getcwd())
 if root_path == "/root":
@@ -12,7 +14,7 @@ if root_path == "/root":
 @route('/')
 def root():
     session_id = str(uuid.uuid4())
-    print(session_id)
+    file_utils.create_session(root_path, session_id)
     text = open(root_path + "/html/header.html", "r").read() + \
            open(root_path + "/html/session_id.html", "r").read().replace("$$session_id$$", session_id) + \
            open(root_path + "/html/0_description.html", "r").read() + \
@@ -28,17 +30,23 @@ def root():
            open(root_path + "/html/footer.html", "r").read()
     return text
 
+
+render_threads = {}
 @post('/request_render')
 def request_render():
     print("requesting render")
     level_dat_file = request.files["level_dat"]
     session_id_file = request.files["session_id"]
+    session_id = str(session_id_file.file.read())
     position_file = request.files["position"]
     settings_file = request.files["settings"]
     region_file_names = filter(lambda x: x not in ["level_dat", "session_id", "position", "settings"], request.files.keys())
     region_files = [request.files[x] for x in region_file_names]
-
-    model_logic.render(root_path, session_id_file, level_dat_file, region_files, position_file, settings_file)
+    new_thread = threading.Thread(target = model_logic.render, args=(
+        render_threads.get(session_id, None), root_path, session_id, level_dat_file, region_files, position_file, settings_file))
+    new_thread.start()
+    render_threads[session_id] = new_thread
+    print("Started thread")
 
 
 @route('/available_cutouts/<session_id>/<cache_breaker>')
@@ -80,7 +88,7 @@ def stylesheet(session_id, color_id, sheet_id, cache_breaker):
 def dxf(session_id):
     return static_file("cutout.dxf", root=root_path + "/data/"+session_id, download="cutout.dxf")
 
-@route('/render_state/<session_id>/<cache_breaker>/')
+@route('/render_state/<session_id>/<cache_breaker>')
 def renderstate(session_id, cache_breaker):
     return open(root_path + "/data/" + session_id + "/render_state.txt").read()
 
@@ -99,6 +107,10 @@ def root_image():
 @route('/corners_graphic')
 def corners_graphic():
     return static_file("BoxGraphic.png", root=root_path + "/graphics")
+
+@route('/stop')
+def stop():
+    raise Exception("Stopping all")
 
 @route('/sitemap')
 def corners_graphic():

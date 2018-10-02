@@ -6,22 +6,18 @@ import shutil
 import sys
 import copy
 import random
-from .shared_utils import get_sections
+from .shared_utils import get_sections, set_render_state
 import math
 
 
 def draw_level(pixel_size, color_array, section_locations):
     colors = {1: [0,0,0], 0: [255, 255, 255]}
-    down = max(color_array.shape[0], color_array.shape[1])
-    across = min(color_array.shape[0], color_array.shape[1])
+    down = color_array.shape[1]
+    across = color_array.shape[0]
     image = np.zeros(((down) * pixel_size, (across) * pixel_size, 3), dtype=np.uint8) + 100
     for x in range(color_array.shape[0]):
         for y in range(color_array.shape[1]):
-            if color_array.shape[1] > color_array.shape[0]:
-                down, across = y,x
-            else:
-                down, across = x,y
-            image[down * pixel_size:(down + 1) * pixel_size, across * pixel_size:(across + 1) * pixel_size] = colors[int(color_array[x, y])]
+            image[y * pixel_size:(y + 1) * pixel_size, x * pixel_size:(x + 1) * pixel_size] = colors[int(color_array[x, y])]
 
     if section_locations:
         sections_x = section_locations[1]
@@ -45,15 +41,16 @@ def generate_layout_files(root_path, session_id, block_array, section_locations,
         shutil.rmtree(image_path)
     os.mkdir(image_path)
 
-    level_image_paths = generate_level_images(image_path, block_array, section_locations)
+    level_image_paths = generate_level_images(root_path, session_id, image_path, block_array, section_locations)
     generate_level_pdf(root_path, session_id, level_image_paths, side_length, block_array.shape)
 
 
-def generate_level_images(image_path, block_array, section_locations):
+def generate_level_images(root_path, session_id, image_path, block_array, section_locations):
     not_zero = lambda x: x != 0
     color_array = 1*not_zero(block_array)
     image_names = []
     for z in range(color_array.shape[2]):
+        set_render_state(root_path, session_id, "Drawing layout image " + str(z+1) + " of " + str(color_array.shape[2]),int(20*z/color_array.shape[2]))
         data = draw_level(20, color_array[:, :, z], section_locations)
         img = Image.fromarray(data, 'RGB')
         img_name = image_path + "/" + str(z) + ".png"
@@ -64,6 +61,7 @@ def generate_level_images(image_path, block_array, section_locations):
 
 
 def generate_level_pdf(root_path, session_id, image_paths, side_length, array_shape):
+    set_render_state(root_path, session_id, "Generating layout pdf",20)
     page_width = 210  # units
     page_height = 298  # units
     page_margin = 20
@@ -78,8 +76,8 @@ def generate_level_pdf(root_path, session_id, image_paths, side_length, array_sh
     pdf.set_font('Times', 'B', 20)
     pdf.set_text_color(36,160,226)
 
-    img_x = array_shape[1] * side_length
-    img_y = array_shape[0] * side_length
+    img_x = array_shape[0] * side_length
+    img_y = array_shape[1] * side_length
 
     if img_x < page_width-page_margin*2 and img_y < page_height-page_margin*2:  # 8x11 inches
         while image_paths:
@@ -98,14 +96,14 @@ def generate_level_pdf(root_path, session_id, image_paths, side_length, array_sh
 
     else:
         for image in image_paths:
-            pages_across = int(math.ceil(img_x/page_width))+text_y
+            pages_across = int(math.ceil(img_x/page_width))
             pages_down = int(math.ceil(img_y/page_height))
             for x in range(pages_across):
                 for y in range(pages_down):
                     pdf.add_page()
                     pdf.image(image, -x*page_width, -y*page_height, array_x, array_y)
                     pdf.text(page_width/2-20, 10, "Level " + str(image.split("/")[-1][:-4]))
-                    pdf.text(page_width/2-20, 20, "Across: " + str(x+1) + " of " + str(pages_across))
-                    pdf.text(page_width/2-20, 30, "Down: " + str(y+1) + " of " + str(pages_down))
+                    pdf.text(page_width/2-20, 30, "Across: " + str(y+1) + " of " + str(pages_down))
+                    pdf.text(page_width/2-20, 20, "Down: " + str(x+1) + " of " + str(pages_across))
 
     pdf.output(root_path + "/data/" + session_id + "/layout.pdf", "F")

@@ -8,7 +8,7 @@ import sys
 import copy
 import random
 import shutil
-from .shared_utils import get_sections
+from .shared_utils import get_sections, set_render_state
 
 sys.setrecursionlimit(100000)
 
@@ -28,15 +28,13 @@ def generate_laser_cut_files(root_path, session_id, block_array_one_color, secti
     os.mkdir(image_directory)
 
     map_sections = get_sections(block_array_one_color, section_locations)
-    print(map_sections)
+    set_render_state(root_path, session_id, "Getting cutouts from map",20)
     cutouts = get_cutouts(map_sections)
-    print(cutouts)
-    cutouts_placed_by_sheets = place_basic(cutouts, units_x, units_y)
+    cutouts_placed_by_sheets = place_basic(root_path, session_id, cutouts, units_x, units_y)
+    set_render_state(root_path, session_id, "Adding tabs",90)
     number_of_sheets_generated = len(cutouts_placed_by_sheets)
-    print("Using " + str(number_of_sheets_generated) + " sheets")
     all_lines = []
     for sheet_id in range(1, number_of_sheets_generated+1):
-        print(cutouts_placed_by_sheets)
         cutouts_in_sheet = list(cutouts_placed_by_sheets[sheet_id-1])
         lines = get_outlines(cutouts_in_sheet)
         lines_with_tabs = add_tabs(lines, tab_size/side_length)
@@ -44,6 +42,7 @@ def generate_laser_cut_files(root_path, session_id, block_array_one_color, secti
         for line in lines_with_tabs:
             all_lines.append(((line[0][0]*side_length, line[0][1]*side_length+(sheet_id-1)*material_width*1.2),
                               (line[1][0]*side_length, line[1][1]*side_length+(sheet_id-1)*material_width*1.2)))
+    set_render_state(root_path, session_id, "Generating dxf",95)
     generate_dxf(root_path, session_id, all_lines)
 
 
@@ -166,18 +165,20 @@ class Sheet:
         raise Exception("Could not place. cutout: " + str(cutout) + ", empty verticals: " + str(self.empty_verticals))
 
 
-def place_basic(cutouts, units_x, units_y):
+def place_basic(root_path, session_id, cutouts, units_x, units_y):
     sheets = [Sheet(units_x, units_y)]
     cutouts_by_height = sorted(cutouts, key=lambda cutout: cutout.shape[1])[::-1]
+    num_cutouts = len(cutouts_by_height)
     cutouts_with_placement = []
     i = 0
     for new_cutout in cutouts_by_height:
         print(i)
         i += 1
+        set_render_state(root_path, session_id, "Placing piece " + str(i) + " of " + str(num_cutouts),
+                         20+int(70*i/num_cutouts))
         placed = False
         for sheet in sheets:
             try:
-                print("HO")
                 sheet.place(new_cutout)
                 placed = True
                 break
