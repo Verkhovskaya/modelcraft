@@ -18,10 +18,10 @@ def root():
            open(root_path + "/html/0_description.html", "r").read() + \
            open(root_path + "/html/1_upload_map.html", "r").read() + \
            open(root_path + "/html/2_pick_location.html", "r").read() + \
+           open(root_path + "/html/advanced_settings.html", "r").read() + \
            open(root_path + "/html/3_laser_cut.html", "r").read()\
                .replace("$$session_id$$", session_id)\
                .replace("$$session_id$$", session_id) + \
-           open(root_path + "/html/advanced_settings.html", "r").read() + \
            open(root_path + "/html/4_build.html", "r").read()\
                .replace("$$session_id$$", session_id) \
                .replace("$$session_id$$", session_id)+ \
@@ -79,6 +79,10 @@ def stylesheet(session_id, color_id, sheet_id, cache_breaker):
 @route("/download_laser_cut_dxf/<session_id>")
 def dxf(session_id):
     return static_file("cutout.dxf", root=root_path + "/data/"+session_id, download="cutout.dxf")
+
+@route('/render_state/<session_id>/<cache_breaker>/')
+def renderstate(session_id, cache_breaker):
+    return open(root_path + "/data/" + session_id + "/render_state.txt").read()
 
 @route('/get_stylesheet')
 def stylesheet():

@@ -8,6 +8,7 @@ import sys
 import copy
 import random
 import shutil
+from .shared_utils import get_sections
 
 sys.setrecursionlimit(100000)
 
@@ -17,7 +18,7 @@ from dxfwrite import DXFEngine as dxf
 colors = {0: (255, 255, 255), 1: (139,105,20), 2: (0, 0, 255), 3: (100, 100, 100)}
 
 
-def generate_laser_cut_files(root_path, session_id, block_array_one_color, color_id, material_width, material_length, side_length, section_size, tab_size, type=["dxf"]):
+def generate_laser_cut_files(root_path, session_id, block_array_one_color, section_locations, color_id, material_width, material_length, side_length, section_size, tab_size, type=["dxf"]):
     units_x = int(material_length/side_length) - 2
     units_y = int(material_width/side_length) - 2
     max_size = int(section_size/side_length)
@@ -27,7 +28,7 @@ def generate_laser_cut_files(root_path, session_id, block_array_one_color, color
         shutil.rmtree(image_directory)
     os.mkdir(image_directory)
 
-    map_sections = split_map(block_array_one_color, max_size)
+    map_sections = get_sections(block_array_one_color, max_size)
     print(map_sections)
     cutouts = get_cutouts(map_sections)
     print(cutouts)
@@ -47,50 +48,25 @@ def generate_laser_cut_files(root_path, session_id, block_array_one_color, color
     generate_dxf(root_path, session_id, all_lines)
 
 
-def split_map(block_array, max_size):
-    extra_x = block_array.shape[0]%max_size
-    extra_y = block_array.shape[1]%max_size
-    array_x = block_array.shape[0]
-    array_y = block_array.shape[1]
-    x_cuts = [i*max_size for i in range(array_x/max_size+1)]
-    y_cuts = [i*max_size for i in range(array_y/max_size+1)]
-
-    if (float(extra_x)/max_size < 0.5) & (len(x_cuts) > 1):
-        x_cuts[-1] = array_x
-    else:
-        x_cuts.append(array_x)
-    if (float(extra_y) / max_size < 0.5) & (len(y_cuts) > 1):
-        y_cuts[-1] = array_y
-    else:
-        y_cuts.append(array_y)
-
-    map_sections = []
-    for y in range(len(y_cuts)-1):
-        for x in range(len(x_cuts)-1):
-            map_sections.append(block_array[x_cuts[x]:x_cuts[x+1], y_cuts[y]:y_cuts[y+1]])
-
-    print(x_cuts, y_cuts)
-    return map_sections
-
-
 def get_cutouts(map_sections):
     cutouts = []
-    for section in map_sections:
-        for z in range(section.shape[2]):
-            flat = [[Tile(section[x, y, z]) for x in range(section.shape[0])] for y in range(section.shape[1])]
-            for x in range(section.shape[0]):
-                for y in range(section.shape[1]):
-                    cutout = spread(flat, x, y)
-                    if cutout != []:
-                        min_x = min([a[0] for a in cutout])
-                        max_x = max([a[0] for a in cutout])
-                        min_y = min([a[1] for a in cutout])
-                        max_y = max([a[1] for a in cutout])
-                        cutout_array = np.zeros((int(max_x - min_x + 1), int(max_y - min_y + 1)), dtype=bool)
-                        for x in range(cutout_array.shape[0]):
-                            for y in range(cutout_array.shape[1]):
-                                cutout_array[x, y] = (x + min_x, y + min_y) in cutout
-                        cutouts.append(cutout_array)
+    for section_row in map_sections:
+        for section in section_row:
+            for z in range(section.shape[2]):
+                flat = [[Tile(section[x, y, z]) for x in range(section.shape[0])] for y in range(section.shape[1])]
+                for x in range(section.shape[0]):
+                    for y in range(section.shape[1]):
+                        cutout = spread(flat, x, y)
+                        if cutout != []:
+                            min_x = min([a[0] for a in cutout])
+                            max_x = max([a[0] for a in cutout])
+                            min_y = min([a[1] for a in cutout])
+                            max_y = max([a[1] for a in cutout])
+                            cutout_array = np.zeros((int(max_x - min_x + 1), int(max_y - min_y + 1)), dtype=bool)
+                            for x in range(cutout_array.shape[0]):
+                                for y in range(cutout_array.shape[1]):
+                                    cutout_array[x, y] = (x + min_x, y + min_y) in cutout
+                            cutouts.append(cutout_array)
     return cutouts
 
 
@@ -120,65 +96,16 @@ def add_tabs(lines, tab_unit_size):
                 else:
                     new_lines.append(line)
         else:
-            new_lines.append(line)
+            if random.random()*4 < 1:
+                new_lines.append(((line[0][0], line[0][1]),\
+                    (line[0][0]+line_vector[0]*(1-tab_unit_size)/2, line[0][1]+line_vector[1]*(1-tab_unit_size)/2)))
+                new_lines.append(((line[1][0], line[1][1]), \
+                                 (line[1][0] - line_vector[0] * (1 - tab_unit_size) / 2,
+                                  line[1][1] - line_vector[1] * (1 - tab_unit_size) / 2)))
+            else:
+                new_lines.append(line)
 
     return new_lines
-"""
-def place_basic(cutouts, units_x, units_y):
-    for x in range(mask_array.shape[0]/segment_size+1):
-        for y in range(mask_array.shape[1]/segment_size+1):
-            cutouts = get_cutouts(mask_array[segment_size*x:segment_size+segment_size*x, segment_size*y:segment_size+segment_size*y, :])
-            all_cutouts += cutouts
-    cutouts_class = place_basic(all_cutouts, x, mask_array.shape[0]/segment_size+1, y, mask_array.shape[1]/segment_size+1, map_x)
-    temp_outlines = get_outlines(cutouts_class)
-    print temp_outlines
-    for cutout in cutouts_class:
-        for x_slide in range(cutout.array.shape[0]):
-            if cutout.array[x_slide, 0]:
-                x_at = x_slide
-                break
-        temp_outlines.remove(((cutout.x+x_at, cutout.y), (cutout.x+x_at, cutout.y+1)))
-        temp_outlines.add(((cutout.x+x_at, cutout.y), (cutout.x+x_at, cutout.y+0.4)))
-        temp_outlines.add(((cutout.x+x_at, cutout.y+0.6), (cutout.x+x_at, cutout.y+1)))
-    for cutout in cutouts_class:
-        for y_slide in range(cutout.array.shape[1]):
-            if cutout.array[0, y_slide]:
-                y_at = y_slide
-                break
-        temp_outlines.remove(((cutout.x, cutout.y+y_at), (cutout.x+1, cutout.y + y_at)))
-        temp_outlines.add(((cutout.x, cutout.y+y_at), (cutout.x+0.4, cutout.y + y_at)))
-        temp_outlines.add(((cutout.x+0.6, cutout.y+y_at), (cutout.x+1, cutout.y + y_at)))
-    for cutout in cutouts_class:
-        for x_slide in range(cutout.array.shape[0]):
-            if cutout.array[x_slide, cutout.array.shape[1]-1]:
-                x_at = x_slide
-                break
-        if ((cutout.x+x_at+1, cutout.y+cutout.array.shape[1]-1), (cutout.x+x_at+1, cutout.y+cutout.array.shape[1])) in temp_outlines:
-            temp_outlines.remove(((cutout.x+x_at+1, cutout.y+cutout.array.shape[1]-1), (cutout.x+x_at+1, cutout.y+cutout.array.shape[1])))
-            temp_outlines.add(((cutout.x+x_at+1, cutout.y+cutout.array.shape[1]-1), (cutout.x+x_at+1, cutout.y+cutout.array.shape[1]-0.6)))
-            temp_outlines.add(((cutout.x+x_at+1, cutout.y+cutout.array.shape[1]-0.4), (cutout.x+x_at+1, cutout.y+cutout.array.shape[1])))
-    change = []
-    for outline in temp_outlines:
-        if random.random() < 0.2:
-            change.append(outline)
-    for outline in change:
-            if outline[1] == (outline[0][0], outline[0][1]+1):
-                temp_outlines.remove(outline)
-                temp_outlines.add(((outline[0][0], outline[0][1]), (outline[0][0], outline[0][1]+0.4)))
-                temp_outlines.add(((outline[0][0], outline[0][1]+0.6), (outline[0][0], outline[0][1]+1)))
-            if outline[1] == (outline[0][0]+1, outline[0][1]):
-                temp_outlines.remove(outline)
-                temp_outlines.add(((outline[0][0], outline[0][1]), (outline[0][0] + 0.4, outline[0][1])))
-                temp_outlines.add(((outline[0][0] + 0.6, outline[0][1]), (outline[0][0] + 1, outline[0][1])))
-
-    print("Placing basic")
-    print("Getting outlines")
-    cutouts_by_color.append(temp_outlines)
-
-    print("Generating dxf")
-    generate_dxf(root_path, session_id, cutouts_by_color, map_x)
-    generate_png(root_path, session_id, cutouts_by_color)
-"""
 
 
 class Tile:

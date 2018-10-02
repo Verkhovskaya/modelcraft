@@ -121,8 +121,8 @@ function request_render(session_id_file, level_dat_file, region_files, position_
 
 function render_results() {
     document.getElementById("no_results_laser_cut").style.display = "none";
-    document.getElementById("loading_bar_build").style.display = "block";
-    document.getElementById("show_results_build").style.display = "none";
+    document.getElementById("loading_bar_laser_cut").style.display = "block";
+    document.getElementById("show_results_laser_cut").style.display = "none";
 
     document.getElementById("no_results_build").style.display = "none";
     document.getElementById("loading_bar_build").style.display = "block";
