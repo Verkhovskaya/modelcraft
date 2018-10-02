@@ -1,4 +1,12 @@
-from external_libraries import pymclevel, pymclevel2_13
+try:
+    from external_libraries import pymclevel
+except Exception as e:
+    print("Could not import parcer for v.12")
+
+try:
+    from external_libraries import pymclevel2_13
+except Exception as e:
+    print("Could not import parcer for v.13")
 import numpy as np
 import copy
 
