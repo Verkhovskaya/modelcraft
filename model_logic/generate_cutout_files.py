@@ -18,17 +18,16 @@ from dxfwrite import DXFEngine as dxf
 colors = {0: (255, 255, 255), 1: (139,105,20), 2: (0, 0, 255), 3: (100, 100, 100)}
 
 
-def generate_laser_cut_files(root_path, session_id, block_array_one_color, section_locations, color_id, material_width, material_length, side_length, section_size, tab_size, type=["dxf"]):
+def generate_laser_cut_files(root_path, session_id, block_array_one_color, section_locations, color_id, material_width, material_length, side_length, tab_size, type=["dxf"]):
     units_x = int(material_length/side_length) - 2
     units_y = int(material_width/side_length) - 2
-    max_size = int(section_size/side_length)
 
     image_directory = root_path + "/data/" + session_id + "/cutout_images"
     if os.path.exists(image_directory):
         shutil.rmtree(image_directory)
     os.mkdir(image_directory)
 
-    map_sections = get_sections(block_array_one_color, max_size)
+    map_sections = get_sections(block_array_one_color, section_locations)
     print(map_sections)
     cutouts = get_cutouts(map_sections)
     print(cutouts)

@@ -16,4 +16,4 @@ def render(root_path, session_id_file, level_dat_file, region_files, position_fi
     width, length, thickness, tab_size, section_size = float(width), float(length), float(thickness), float(tab_size), int(section_size)
     section_locations = get_array_section_positions(block_array, section_size)
     generate_layout_files(root_path, session_id, block_array, section_locations, thickness, type=["pdf"])
-    #generate_laser_cut_files(root_path, session_id, block_array, section_locations, 1, width, length, thickness, section_size, tab_size, type=["dxf"])
+    generate_laser_cut_files(root_path, session_id, block_array, section_locations, 1, width, length, thickness, tab_size, type=["dxf"])
