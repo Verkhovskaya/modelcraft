@@ -48,9 +48,10 @@ def generate_laser_cut_files(root_path, session_id, block_array_one_color, piece
 def get_cutouts(block_array, piece_max):
     all_cutouts = []
     for z in range(block_array.shape[2]):
+        flat = [[Tile(block_array[x, y, z]) for x in range(block_array.shape[0])] for y in range(block_array.shape[1])]
         for x in range(block_array.shape[0]):
             for y in range(block_array.shape[1]):
-                cutout = spread(block_array[:, :, z], x, y)
+                cutout = spread(flat, x, y)
                 if cutout:
                     min_x = min([a[0] for a in cutout])
                     max_x = max([a[0] for a in cutout])

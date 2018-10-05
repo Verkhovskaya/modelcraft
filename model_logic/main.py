@@ -26,5 +26,5 @@ def render(previous_thread, root_path, session_id, level_dat_file, region_files,
     width, length, thickness, tab_size, piece_size = float(width), float(length), float(thickness), float(tab_size), int(piece_size)
     water, lava, clear, fence, torch = settings_text[2].split(" ")
     generate_layout_files(root_path, session_id, block_array, thickness, type=["pdf"])
-    #generate_laser_cut_files(root_path, session_id, block_array, piece_size, 1, width, length, thickness, tab_size, type=["dxf"])
+    generate_laser_cut_files(root_path, session_id, block_array, piece_size, 1, width, length, thickness, tab_size, type=["dxf"])
     set_render_state(root_path, session_id, "done",100)
