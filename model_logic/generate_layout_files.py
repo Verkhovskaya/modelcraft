@@ -85,8 +85,15 @@ def generate_level_pdf(root_path, session_id, image_paths, side_length, array_sh
             pdf.add_page()
             num_across = int((page_width-page_margin*2) / img_x)
             num_down = int((page_height-page_margin*2) / (img_y+text_y))
-            spacing_x = (page_width-page_margin*2 - num_across * img_x) / (num_across-1)
-            spacing_y = (page_height-page_margin*2 - num_down*(text_y+img_y)) / (num_across-1)
+            if num_across > 1:
+                spacing_x = (page_width-page_margin*2 - num_across * img_x) / (num_across-1)
+            else:
+                spacing_x = 0
+            if num_down > 1:
+                spacing_y = (page_height-page_margin*2 - num_down*(text_y+img_y)) / (num_down-1)
+            else:
+                spacing_y = 0
+
             for y in range(num_down):
                 for x in range(num_across):
                     if image_paths:

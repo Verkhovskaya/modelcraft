@@ -12,18 +12,33 @@ import copy
 
 
 def make_hollow(color_array):
+    hollow_blocks = [0]
     hollow_array = copy.copy(color_array)
     for z_minus in range(2, color_array.shape[2]+1):
         z = color_array.shape[2]-z_minus
         for x in range(1,color_array.shape[0]-1):
             for y in range(1, color_array.shape[1]-1):
-                if int(color_array[x-1,y,z+1]) == 1 and int(color_array[x+1,y,z+1]) == 1:
-                    if int(color_array[x,y-1,z+1]) == 1 and int(color_array[x,y+1,z+1]) == 1:
-                        if int(color_array[x+1,y-1,z+1]) == 1 and int(color_array[x+1,y+1,z+1]) == 1:
-                            if int(color_array[x-1,y-1,z+1]) == 1 and int(color_array[x-1,y+1,z+1]) == 1:
-                                if color_array[x,y,z+1] == 1:
-                                    hollow_array[x,y,z] = 0
+                if int(color_array[x-1,y-1,z+1]) not in hollow_blocks and\
+                        int(color_array[x,y-1,z+1]) not in hollow_blocks and\
+                        int(color_array[x+1,y-1,z+1]) not in hollow_blocks and\
+                        int(color_array[x+1,y,z+1]) not in hollow_blocks and\
+                        int(color_array[x+1,y+1,z+1]) not in hollow_blocks and\
+                        int(color_array[x,y+1,z+1]) not in hollow_blocks and\
+                        int(color_array[x-1,y+1,z+1]) not in hollow_blocks and\
+                        int(color_array[x-1,y,z+1]) not in hollow_blocks:
+                    hollow_array[x, y, z] = 0
+
     return hollow_array
+
+
+def add_supports(main_array):
+    z = main_array.shape[2]
+    non_zero = np.vectorize(lambda x: x != 0)
+    supports_array = np.copy(main_array)
+    supports_array[:,:,:z-1] += supports_array[:,:,1:z]
+    supports_array = make_hollow(supports_array)
+    main_array += supports_array
+    return non_zero(main_array)
 
 
 class AttributeHolder():
@@ -90,6 +105,11 @@ def get_array_from_map(root_path, session_id, x1, y1, z1, x2, y2, z2, settings_t
                     except AttributeError as e:
                         print("Could not find region " + str((region_x, region_y)) +", chunk " + str((chunk_x, chunk_y)))
 
+    non_zero = np.vectorize(lambda x: x != 0)
+    block_array = 1*non_zero(block_array)
     if hollow:
         block_array = make_hollow(block_array)
+    if supports:
+        block_array = add_supports(block_array)
+
     return block_array
