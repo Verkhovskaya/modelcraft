@@ -62,7 +62,18 @@ def get_cutouts(block_array, piece_max):
                         for y in range(cutout_array.shape[1]):
                             cutout_array[x, y] = (x + min_x, y + min_y) in cutout
                     all_cutouts.append(cutout_array)
-    return all_cutouts
+
+    cutouts_smaller_than_max = []
+    for cutout in all_cutouts:
+        for x in range(int(cutout.shape[0]/piece_max)+1):
+            for y in range(int(cutout.shape[1]/piece_max)+1):
+                start_x = x*piece_max
+                start_y = y*piece_max
+                end_x = min((x+1)*piece_max, cutout.shape[0])
+                end_y = min((y+1)*piece_max, cutout.shape[1])
+                cutouts_smaller_than_max.append(cutout[start_x:end_x,start_y:end_y])
+
+    return cutouts_smaller_than_max
 
 
 def add_tabs(lines, tab_unit_size):
