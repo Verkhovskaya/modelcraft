@@ -6,7 +6,7 @@ import shutil
 import sys
 import copy
 import random
-from .shared_utils import get_sections, set_render_state
+from .shared_utils import get_sections, set_render_state, get_array_section_positions
 import math
 
 
@@ -35,7 +35,8 @@ def draw_level(pixel_size, color_array, section_locations):
     return image
 
 
-def generate_layout_files(root_path, session_id, block_array, section_locations, side_length, type=["pdf"]):
+def generate_layout_files(root_path, session_id, block_array, side_length, type=["pdf"]):
+    section_locations = get_array_section_positions(block_array, 10)
     image_path = root_path + "/data/" + session_id + "/layout_images"
     if os.path.exists(image_path):
         shutil.rmtree(image_path)

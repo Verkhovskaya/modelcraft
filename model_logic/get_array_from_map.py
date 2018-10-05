@@ -47,7 +47,7 @@ def get_array_from_map(root_path, session_id, x1, y1, z1, x2, y2, z2, settings_t
     z_diff = z_max - z_min
 
     try:
-        level = pymclevel.mclevel.fromFile(root_path + "/data/" + session_id + "/map")
+        level = pymclevel_copy.mclevel.fromFile(root_path + "/data/" + session_id + "/map")
         block_array = np.zeros((x_diff, y_diff, z_diff))
         for x in range(x_min, x_max):
             for y in range(y_min, y_max):
@@ -57,7 +57,7 @@ def get_array_from_map(root_path, session_id, x1, y1, z1, x2, y2, z2, settings_t
 
     except Exception as e:
         world = AttributeHolder()
-        world.materials = pymclevel2_13.materials.BlockstateMaterials()
+        world.materials = pymclevel2_copy.materials.BlockstateMaterials()
         # setattr(world, 'materials', anvil2.BlockstateMaterials())
         # 10_10_chunks_per_region
         #  16_16_chunk
@@ -73,8 +73,8 @@ def get_array_from_map(root_path, session_id, x1, y1, z1, x2, y2, z2, settings_t
                 region_y = y/160
                 if (region_x, region_y) not in regions.keys():
                     world = AttributeHolder()
-                    world.materials = pymclevel2_13.anvil2.BlockstateMaterials()
-                    regions[(region_x, region_y)] = pymclevel2_13.anvil2.BlockstateRegionFile(world,
+                    world.materials = pymclevel2_copy.anvil2.BlockstateMaterials()
+                    regions[(region_x, region_y)] = pymclevel2_copy.anvil2.BlockstateRegionFile(world,
                         root_path + "/data/" + session_id + "/map/region/r." + str(region_x) + "." + str(region_y) + ".mca")
 
                 chunk_x = x % 10

@@ -169,7 +169,7 @@ function render_results() {
     let length = document.getElementById("length").value;
     let thickness = document.getElementById("thickness").value;
     let tab_size = document.getElementById("tab_size").value;
-    let section_size = document.getElementById("section_size").value;
+    let piece_size = document.getElementById("piece_size").value;
 
     let water = get_radio_value("water_settings");
     let lava = get_radio_value("lava_settings");
@@ -179,7 +179,7 @@ function render_results() {
 
 
     let settings_text = hollow + " " + supports + "\n";
-    settings_text += width + " " + length + " " + thickness + " " + tab_size + " " + section_size + "\n";
+    settings_text += width + " " + length + " " + thickness + " " + tab_size + " " + piece_size + "\n";
     settings_text += water + " " + lava + " " + clear + " " + fence + " " + torch;
 
     let settings_file = new File([settings_text],

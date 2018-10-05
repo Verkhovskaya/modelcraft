@@ -8,7 +8,7 @@ import sys
 import copy
 import random
 import shutil
-from .shared_utils import get_sections, set_render_state
+from .shared_utils import set_render_state
 
 sys.setrecursionlimit(100000)
 
@@ -18,7 +18,7 @@ from dxfwrite import DXFEngine as dxf
 colors = {0: (255, 255, 255), 1: (139,105,20), 2: (0, 0, 255), 3: (100, 100, 100)}
 
 
-def generate_laser_cut_files(root_path, session_id, block_array_one_color, section_locations, color_id, material_width, material_length, side_length, tab_size, type=["dxf"]):
+def generate_laser_cut_files(root_path, session_id, block_array_one_color, piece_max, color_id, material_width, material_length, side_length, tab_size, type=["dxf"]):
     units_x = int(material_length/side_length) - 2
     units_y = int(material_width/side_length) - 2
 
@@ -27,9 +27,8 @@ def generate_laser_cut_files(root_path, session_id, block_array_one_color, secti
         shutil.rmtree(image_directory)
     os.mkdir(image_directory)
 
-    map_sections = get_sections(block_array_one_color, section_locations)
     set_render_state(root_path, session_id, "Getting cutouts from map",20)
-    cutouts = get_cutouts(map_sections)
+    cutouts = get_cutouts(block_array_one_color, piece_max)
     cutouts_placed_by_sheets = place_basic(root_path, session_id, cutouts, units_x, units_y)
     set_render_state(root_path, session_id, "Adding tabs",90)
     number_of_sheets_generated = len(cutouts_placed_by_sheets)
@@ -46,26 +45,23 @@ def generate_laser_cut_files(root_path, session_id, block_array_one_color, secti
     generate_dxf(root_path, session_id, all_lines)
 
 
-def get_cutouts(map_sections):
-    cutouts = []
-    for section_row in map_sections:
-        for section in section_row:
-            for z in range(section.shape[2]):
-                flat = [[Tile(section[x, y, z]) for x in range(section.shape[0])] for y in range(section.shape[1])]
-                for x in range(section.shape[0]):
-                    for y in range(section.shape[1]):
-                        cutout = spread(flat, x, y)
-                        if cutout != []:
-                            min_x = min([a[0] for a in cutout])
-                            max_x = max([a[0] for a in cutout])
-                            min_y = min([a[1] for a in cutout])
-                            max_y = max([a[1] for a in cutout])
-                            cutout_array = np.zeros((int(max_x - min_x + 1), int(max_y - min_y + 1)), dtype=bool)
-                            for x in range(cutout_array.shape[0]):
-                                for y in range(cutout_array.shape[1]):
-                                    cutout_array[x, y] = (x + min_x, y + min_y) in cutout
-                            cutouts.append(cutout_array)
-    return cutouts
+def get_cutouts(block_array, piece_max):
+    all_cutouts = []
+    for z in range(block_array.shape[2]):
+        for x in range(block_array.shape[0]):
+            for y in range(block_array.shape[1]):
+                cutout = spread(block_array[:, :, z], x, y)
+                if cutout:
+                    min_x = min([a[0] for a in cutout])
+                    max_x = max([a[0] for a in cutout])
+                    min_y = min([a[1] for a in cutout])
+                    max_y = max([a[1] for a in cutout])
+                    cutout_array = np.zeros((int(max_x - min_x + 1), int(max_y - min_y + 1)), dtype=bool)
+                    for x in range(cutout_array.shape[0]):
+                        for y in range(cutout_array.shape[1]):
+                            cutout_array[x, y] = (x + min_x, y + min_y) in cutout
+                    all_cutouts.append(cutout_array)
+    return all_cutouts
 
 
 def add_tabs(lines, tab_unit_size):
