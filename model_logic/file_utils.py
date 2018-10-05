@@ -11,6 +11,10 @@ def create_session(root_path, session_id):
     if not os.path.exists(session_directory):
         os.mkdir(session_directory)
 
+    image_directory = session_directory + "/cutout_images"
+    if not os.path.exists(image_directory):
+        os.mkdir(image_directory)
+
 
 def save_files(root_path, session_id, level_dat_file, region_files, position_file, settings_file):
     if not position_file:

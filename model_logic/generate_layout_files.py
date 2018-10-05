@@ -42,7 +42,7 @@ def generate_layout_files(root_path, session_id, block_array, section_locations,
     os.mkdir(image_path)
 
     level_image_paths = generate_level_images(root_path, session_id, image_path, block_array, section_locations)
-    generate_level_pdf(root_path, session_id, level_image_paths, side_length, block_array.shape)
+    generate_level_pdf(root_path, session_id, level_image_paths, side_length, block_array.shape, section_locations)
 
 
 def generate_level_images(root_path, session_id, image_path, block_array, section_locations):
@@ -60,7 +60,7 @@ def generate_level_images(root_path, session_id, image_path, block_array, sectio
     return image_names
 
 
-def generate_level_pdf(root_path, session_id, image_paths, side_length, array_shape):
+def generate_level_pdf(root_path, session_id, image_paths, side_length, array_shape, section_locations):
     set_render_state(root_path, session_id, "Generating layout pdf",20)
     page_width = 210  # units
     page_height = 298  # units
@@ -95,15 +95,47 @@ def generate_level_pdf(root_path, session_id, image_paths, side_length, array_sh
                         pdf.image(image, page_margin+x*spacing_x + x*img_x, page_margin+y*spacing_y + y*(img_y+text_y), array_x, array_y)
 
     else:
-        for image in image_paths:
-            pages_across = int(math.ceil(img_x/page_width))
-            pages_down = int(math.ceil(img_y/page_height))
-            for x in range(pages_across):
-                for y in range(pages_down):
+        for i in range(len(image_paths)):
+            image_path = image_paths[i]
+            section_size_x_units = section_locations[0][1]*20
+            section_size_y_units = section_locations[1][1]*20
+            section_size_x_pdf = section_size_x_units*mm/20*side_length
+            section_size_y_pdf = section_size_y_units*mm/20*side_length
+            num_sections_across = len(section_locations[0])-1
+            num_sections_down = len(section_locations[1])-1
+            sections_across = int((page_width-2.0*page_margin)/section_size_x_pdf)
+            sections_down = int((page_height-2.0*page_margin)/section_size_y_pdf)
+            pages_across = int(math.ceil((len(section_locations[0])-1.0)/sections_across))
+            pages_down = int(math.ceil((len(section_locations[1])-1.0)/sections_down))
+            for page_across in range(pages_across):
+                for page_down in range(pages_down):
                     pdf.add_page()
-                    pdf.image(image, -x*page_width, -y*page_height, array_x, array_y)
-                    pdf.text(page_width/2-20, 10, "Level " + str(image.split("/")[-1][:-4]))
-                    pdf.text(page_width/2-20, 30, "Across: " + str(y+1) + " of " + str(pages_down))
-                    pdf.text(page_width/2-20, 20, "Down: " + str(x+1) + " of " + str(pages_across))
+                    original = Image.open(image_path)
+
+                    section_start_x = page_across*sections_across + 1
+                    section_start_y = page_down*sections_down + 1
+                    section_end_x = min(num_sections_across, (page_across+1)*sections_across)
+                    section_end_y = min(num_sections_down, (page_down+1)*sections_down)
+
+                    left = (section_start_x-1)*section_size_x_units
+                    top = (section_start_y-1)*section_size_y_units
+                    right = section_end_x*section_size_x_units
+                    bottom = section_end_y*section_size_y_units
+                    cropped_image = original.crop((left, top, right, bottom))
+                    cropped_path = image_path[:-4] + "_" + str(page_across) + "_" + str(page_down) + ".png"
+                    cropped_image.save(cropped_path)
+
+                    pdf_size_x = cropped_image.size[0]/20*mm*side_length
+                    pdf_size_y = cropped_image.size[1]/20*mm*side_length
+
+                    pdf_start_x = (page_width-pdf_size_x)/2
+                    pdf_start_y = (page_height-pdf_size_y)/2
+
+                    pdf.image(cropped_path, pdf_start_x, pdf_start_y, pdf_size_x, pdf_size_y)
+                    pdf.text(page_width/2-40, 20, "Level " + str(i+1) + " / " + str(len(image_paths)))
+                    pdf.text(page_width/2-40, 30, "Across: sections " +
+                             str(section_start_x) + " - " + str(section_end_x) + " / " + str(num_sections_across))
+                    pdf.text(page_width/2-40, 40, "Down: sections " +
+                             str(section_start_y) + " - " + str(section_end_y) + " / " + str(num_sections_down))
 
     pdf.output(root_path + "/data/" + session_id + "/layout.pdf", "F")

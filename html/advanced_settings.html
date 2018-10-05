@@ -4,6 +4,19 @@
         <label for="advanced_settings_button" style="margin: 1em; padding: 1em; background-color: cornflowerblue">Advanced settings</label>
         <div id="advanced_settings" style="display: none">
             <form id="advanced_settings_form">
+
+                <p id="instructions">Hollow cutout</p>
+                <p id="extra">
+                    <input type="radio" name="hollow" value="true" checked="checked"> Yes
+                    <input type="radio" name="hollow" value="false"> No
+                </p>
+
+                <p id="instructions">Add supports</p>
+                <p id="extra">
+                    <input type="radio" name="add_supports" value="true"> Yes
+                    <input type="radio" name="add_supports" value="false" checked="checked"> No
+                </p>
+
                 <p id="instructions">Material width (mm) </p>
                 <p id="extra"><input id="width" type="number" value="300"/></p>
                 <p id="instructions">Material length (mm) </p>
@@ -14,6 +27,41 @@
                 <p id="extra"><input id="tab_size" type="number" value="0.3"/></p>
                 <p id="instructions">Section size (units) </p>
                 <p id="extra"><input id="section_size" type="number" value="30"/></p>
+
+                <p id="instructions">Cut out water </p>
+                <p id="extra">
+                    <input type="radio" name="water_settings" value="main" checked="checked"> On main board
+                    <input type="radio" name="water_settings" value="separate"> On separate board
+                    <input type="radio" name="water_settings" value="no"> Do not cut
+                </p>
+
+                <p id="instructions">Cut out lava </p>
+                <p id="extra">
+                    <input type="radio" name="lava_settings" value="main" checked="checked"> On main board
+                    <input type="radio" name="lava_settings" value="separate"> On separate board
+                    <input type="radio" name="lava_settings" value="no"> Do not cut
+                </p>
+
+                <p id="instructions">Cut out clear blocks </p>
+                <p id="extra">
+                    <input type="radio" name="clear_settings" value="main" checked="checked"> On main board
+                    <input type="radio" name="clear_settings" value="separate"> On separate board
+                    <input type="radio" name="clear_settings" value="no"> Do not cut
+                </p>
+
+                <p id="instructions">Cut out fences</p>
+                <p id="extra">
+                    <input type="radio" name="fence_settings" value="main" checked="checked"> On main board
+                    <input type="radio" name="fence_settings" value="separate"> On separate board
+                    <input type="radio" name="fence_settings" value="no"> Do not cut
+                </p>
+
+                <p id="instructions">Cut out torches</p>
+                <p id="extra">
+                    <input type="radio" name="torch_settings" value="main" checked="checked"> On main board
+                    <input type="radio" name="torch_settings" value="separate"> On separate board
+                    <input type="radio" name="torch_settings" value="no"> Do not cut
+                </p>
             </form>
         </div>
     </div>

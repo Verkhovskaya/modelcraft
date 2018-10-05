@@ -124,6 +124,17 @@ function request_render(session_id_file, level_dat_file, region_files, position_
     xhttp.send(form_data);
 }
 
+function get_radio_value(name) {
+    var radios = document.getElementsByName(name);
+
+    for (var i = 0, length = radios.length; i < length; i++) {
+        if (radios[i].checked) {
+            // do whatever you want with the checked radio
+            return(radios[i].value);
+        }
+    }
+}
+
 function render_results() {
     document.getElementById("no_results_laser_cut").style.display = "none";
     document.getElementById("loading_laser_cut").style.display = "block";
@@ -143,6 +154,7 @@ function render_results() {
     let z1 = document.getElementById("z1").value;
     let z2 = document.getElementById("z2").value;
 
+
     document.getElementById("layout_image_largest_value").value = Math.abs(z1-z2)-1;
 
     let num_text = x1 + " " + y1 + " " + z1 + " " + x2 + " " + y2 + " " + z2;
@@ -150,12 +162,25 @@ function render_results() {
     let position_file = new File([num_text],
         "position.txt", {type: "text/plain",});
 
+    let hollow = get_radio_value("hollow");
+    let supports = get_radio_value("add_supports");
+
     let width = document.getElementById("width").value;
     let length = document.getElementById("length").value;
     let thickness = document.getElementById("thickness").value;
     let tab_size = document.getElementById("tab_size").value;
     let section_size = document.getElementById("section_size").value;
-    let settings_text = width + " " + length + " " + thickness + " " + tab_size + " " + section_size;
+
+    let water = get_radio_value("water_settings");
+    let lava = get_radio_value("lava_settings");
+    let clear = get_radio_value("clear_settings");
+    let fence = get_radio_value("fence_settings");
+    let torch = get_radio_value("torch_settings");
+
+
+    let settings_text = hollow + " " + supports + "\n";
+    settings_text += width + " " + length + " " + thickness + " " + tab_size + " " + section_size + "\n";
+    settings_text += water + " " + lava + " " + clear + " " + fence + " " + torch;
 
     let settings_file = new File([settings_text],
         "settings.txt", {type: "text/plain",});

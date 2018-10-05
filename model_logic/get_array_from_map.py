@@ -1,10 +1,10 @@
 try:
-    from external_libraries import pymclevel
+    from external_libraries import pymclevel_copy
 except Exception as e:
     print("Could not import parcer for v.12")
 
 try:
-    from external_libraries import pymclevel2_13
+    from external_libraries import pymclevel2_copy
 except Exception as e:
     print("Could not import parcer for v.13")
 import numpy as np
@@ -30,7 +30,11 @@ class AttributeHolder():
     pass
 
 
-def get_array_from_map(root_path, session_id, x1, y1, z1, x2, y2, z2, hollow=True):
+def get_array_from_map(root_path, session_id, x1, y1, z1, x2, y2, z2, settings_text):
+    hollow, supports = settings_text[0].split(" ")
+    hollow = (hollow == "true")
+    supports = (supports == "true")
+
     x_min = min(int(x1), int(x2))
     x_max = max(int(x1), int(x2))
     y_min = min(int(y1), int(y2))
@@ -50,9 +54,6 @@ def get_array_from_map(root_path, session_id, x1, y1, z1, x2, y2, z2, hollow=Tru
                 chunk = level.getChunk(x / 16, y / 16)
                 block = chunk.Blocks[x % 16, y % 16, z_min:z_max].astype(int)
                 block_array[x - x_min, y - y_min, :] = block
-        if hollow:
-            block_array = make_hollow(block_array)
-        return block_array
 
     except Exception as e:
         world = AttributeHolder()
@@ -89,4 +90,6 @@ def get_array_from_map(root_path, session_id, x1, y1, z1, x2, y2, z2, hollow=Tru
                     except AttributeError as e:
                         print("Could not find region " + str((region_x, region_y)) +", chunk " + str((chunk_x, chunk_y)))
 
-        return block_array
+    if hollow:
+        block_array = make_hollow(block_array)
+    return block_array
