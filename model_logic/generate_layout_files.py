@@ -10,11 +10,28 @@ from .shared_utils import get_sections, set_render_state, get_array_section_posi
 import math
 
 
-def draw_level(pixel_size, color_array, section_locations):
-    colors = {1: [0,0,0], 0: [255, 255, 255]}
-    down = color_array.shape[1]
-    across = color_array.shape[0]
-    image = np.zeros(((down) * pixel_size, (across) * pixel_size, 3), dtype=np.uint8) + 100
+def draw_level(pixel_size, block_arrays, z, section_locations, block_type_settings):
+    colors = {0: [255, 255, 255], 1: [0,0,0], 2: [0,0,255], 3: [255, 0, 0], 4: [255, 0, 255], 5: [255, 255, 0], 6: [0, 255, 255]}
+
+    other_array = block_arrays['other']
+    across = other_array.shape[0]
+    down = other_array.shape[1]
+
+    color_array = np.zeros((across, down))
+    color_array += other_array[:,:,z]
+
+    if block_type_settings['water'] in ['separate']:
+        color_array += 2*block_arrays['water'][:,:,z]
+    if block_type_settings['lava'] in ['separate']:
+        color_array += 3*block_arrays['lava'][:,:,z]
+    if block_type_settings['glass'] in ['separate']:
+        color_array += 4*block_arrays['glass'][:,:,z]
+    if block_type_settings['fence'] in ['separate']:
+        color_array += 5*block_arrays['fence'][:,:,z]
+    if block_type_settings['torch'] in ['separate']:
+        color_array += 6*block_arrays['torch'][:,:,z]
+
+    image = np.zeros((down * pixel_size, across * pixel_size, 3), dtype=np.uint8) + 100
     for x in range(color_array.shape[0]):
         for y in range(color_array.shape[1]):
             image[y * pixel_size:(y + 1) * pixel_size, x * pixel_size:(x + 1) * pixel_size] = colors[int(color_array[x, y])]
@@ -35,24 +52,24 @@ def draw_level(pixel_size, color_array, section_locations):
     return image
 
 
-def generate_layout_files(root_path, session_id, block_array, side_length, type=["pdf"]):
-    section_locations = get_array_section_positions(block_array, 10)
+def generate_layout_files(root_path, session_id, block_arrays, side_length, block_type_settings, type=["pdf"]):
+    section_locations = get_array_section_positions(block_arrays['other'], 10)
     image_path = root_path + "/data/" + session_id + "/layout_images"
     if os.path.exists(image_path):
         shutil.rmtree(image_path)
     os.mkdir(image_path)
 
-    level_image_paths = generate_level_images(root_path, session_id, image_path, block_array, section_locations)
-    generate_level_pdf(root_path, session_id, level_image_paths, side_length, block_array.shape, section_locations)
+    level_image_paths = generate_level_images(root_path, session_id, image_path, block_arrays, section_locations, block_type_settings)
+    generate_level_pdf(root_path, session_id, level_image_paths, side_length, block_arrays['other'].shape,
+                       section_locations)
 
 
-def generate_level_images(root_path, session_id, image_path, block_array, section_locations):
-    not_zero = lambda x: x != 0
-    color_array = 1*not_zero(block_array)
+def generate_level_images(root_path, session_id, image_path, block_arrays, section_locations, block_type_settings):
     image_names = []
-    for z in range(color_array.shape[2]):
-        set_render_state(root_path, session_id, "Drawing layout image " + str(z+1) + " of " + str(color_array.shape[2]),int(20*z/color_array.shape[2]))
-        data = draw_level(20, color_array[:, :, z], section_locations)
+    z_size = block_arrays['other'].shape[2]
+    for z in range(z_size):
+        set_render_state(root_path, session_id, "Drawing layout image " + str(z+1) + " of " + str(z_size),int(20*z/z_size))
+        data = draw_level(20, block_arrays, z, section_locations, block_type_settings)
         img = Image.fromarray(data, 'RGB')
         img_name = image_path + "/" + str(z) + ".png"
         image_names.append(img_name)

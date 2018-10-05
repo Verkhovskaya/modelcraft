@@ -33,7 +33,7 @@ def make_hollow(color_array):
 
 def add_supports(main_array):
     z = main_array.shape[2]
-    non_zero = np.vectorize(lambda x: x != 0)
+    non_zero = np.vectorize(lambda x: 1*(x != 0))
     supports_array = np.copy(main_array)
     supports_array[:,:,:z-1] += supports_array[:,:,1:z]
     supports_array = make_hollow(supports_array)
@@ -45,11 +45,7 @@ class AttributeHolder():
     pass
 
 
-def get_array_from_map(root_path, session_id, x1, y1, z1, x2, y2, z2, settings_text):
-    hollow, supports = settings_text[0].split(" ")
-    hollow = (hollow == "true")
-    supports = (supports == "true")
-
+def get_arrays_from_map(root_path, session_id, x1, y1, z1, x2, y2, z2, edit_settings, block_type_settings):
     x_min = min(int(x1), int(x2))
     x_max = max(int(x1), int(x2))
     y_min = min(int(y1), int(y2))
@@ -61,7 +57,7 @@ def get_array_from_map(root_path, session_id, x1, y1, z1, x2, y2, z2, settings_t
     y_diff = y_max - y_min
     z_diff = z_max - z_min
 
-    try:
+    if True:
         level = pymclevel_copy.mclevel.fromFile(root_path + "/data/" + session_id + "/map")
         block_array = np.zeros((x_diff, y_diff, z_diff))
         for x in range(x_min, x_max):
@@ -70,7 +66,43 @@ def get_array_from_map(root_path, session_id, x1, y1, z1, x2, y2, z2, settings_t
                 block = chunk.Blocks[x % 16, y % 16, z_min:z_max].astype(int)
                 block_array[x - x_min, y - y_min, :] = block
 
+        is_water = np.vectorize(lambda x: 1*(x in [8,9,79]))
+        is_lava = np.vectorize(lambda x: 1*(x in [10,11]))
+        is_glass = np.vectorize(lambda x: 1*(x in [20,241]))
+        is_fence = np.vectorize(lambda x: 1*(x in [85, 113]))
+        is_torch = np.vectorize(lambda x: 1*(x in [50]))
+        is_not_air = np.vectorize(lambda x: 1*(x != 0))
+
+        water_array = is_water(block_array)
+        lava_array = is_lava(block_array)
+        glass_array = is_glass(block_array)
+        fence_array = is_fence(block_array)
+        torch_array = is_torch(block_array)
+
+        other_array = is_not_air(block_array)
+        if block_type_settings['water'] != 'main':
+            other_array -= water_array
+        if block_type_settings['lava'] != 'main':
+            other_array -= lava_array
+        if block_type_settings['glass'] != 'main':
+            other_array -= glass_array
+        if block_type_settings['fence'] != 'main':
+            other_array -= fence_array
+        if block_type_settings['torch'] != 'main':
+            other_array -= torch_array
+
+        if edit_settings['supports'] == "true":
+            other_array = add_supports(other_array)
+        if edit_settings['hollow'] == "true":
+            other_array = make_hollow(other_array)
+
+        print("Success!")
+        return {'water': water_array, 'lava': lava_array, 'glass': glass_array, 'fence': fence_array,
+                'torch': torch_array, 'other': other_array}
+
+        """
     except Exception as e:
+        print(e)
         world = AttributeHolder()
         world.materials = pymclevel2_copy.materials.BlockstateMaterials()
         # setattr(world, 'materials', anvil2.BlockstateMaterials())
@@ -104,12 +136,4 @@ def get_array_from_map(root_path, session_id, x1, y1, z1, x2, y2, z2, settings_t
                         block_array[x-x_min, y-y_min, :] = blocks
                     except AttributeError as e:
                         print("Could not find region " + str((region_x, region_y)) +", chunk " + str((chunk_x, chunk_y)))
-
-    non_zero = np.vectorize(lambda x: x != 0)
-    block_array = 1*non_zero(block_array)
-    if hollow:
-        block_array = make_hollow(block_array)
-    if supports:
-        block_array = add_supports(block_array)
-
-    return block_array
+            """
