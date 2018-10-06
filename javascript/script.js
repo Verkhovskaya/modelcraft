@@ -176,11 +176,12 @@ function render_results() {
     let clear = get_radio_value("clear_settings");
     let fence = get_radio_value("fence_settings");
     let torch = get_radio_value("torch_settings");
+    let ladder = get_radio_value("ladder_settings");
 
 
     let settings_text = hollow + " " + supports + "\n";
     settings_text += width + " " + length + " " + thickness + " " + tab_size + " " + piece_size + "\n";
-    settings_text += water + " " + lava + " " + clear + " " + fence + " " + torch;
+    settings_text += water + " " + lava + " " + clear + " " + fence + " " + torch + " " + ladder;
 
     let settings_file = new File([settings_text],
         "settings.txt", {type: "text/plain",});

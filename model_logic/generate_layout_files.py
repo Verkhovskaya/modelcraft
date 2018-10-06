@@ -11,7 +11,7 @@ import math
 
 
 def draw_level(pixel_size, block_arrays, z, section_locations, block_type_settings):
-    colors = {0: [255, 255, 255], 1: [0,0,0], 2: [0,0,255], 3: [255, 0, 0], 4: [255, 0, 255], 5: [255, 255, 0], 6: [0, 255, 255]}
+    colors = {0: [255, 255, 255], 1: [0,0,0], 2: [0,0,255], 3: [255, 0, 0], 4: [255, 0, 255], 5: [255, 255, 0], 6: [0, 255, 255], 7: [200, 200, 100]}
 
     other_array = block_arrays['other']
     across = other_array.shape[0]
@@ -30,6 +30,8 @@ def draw_level(pixel_size, block_arrays, z, section_locations, block_type_settin
         color_array += 5*block_arrays['fence'][:,:,z]
     if block_type_settings['torch'] in ['separate']:
         color_array += 6*block_arrays['torch'][:,:,z]
+    if block_type_settings['ladder'] in ['separate']:
+        color_array += 7*block_arrays['ladder'][:,:,z]
 
     image = np.zeros((down * pixel_size, across * pixel_size, 3), dtype=np.uint8) + 100
     for x in range(color_array.shape[0]):

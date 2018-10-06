@@ -71,6 +71,7 @@ def get_arrays_from_map(root_path, session_id, x1, y1, z1, x2, y2, z2, edit_sett
         is_glass = np.vectorize(lambda x: 1*(x in [20,241]))
         is_fence = np.vectorize(lambda x: 1*(x in [85, 113]))
         is_torch = np.vectorize(lambda x: 1*(x in [50]))
+        is_ladder = np.vectorize(lambda x: 1*(x in [65]))
         is_not_air = np.vectorize(lambda x: 1*(x != 0))
 
         water_array = is_water(block_array)
@@ -78,6 +79,7 @@ def get_arrays_from_map(root_path, session_id, x1, y1, z1, x2, y2, z2, edit_sett
         glass_array = is_glass(block_array)
         fence_array = is_fence(block_array)
         torch_array = is_torch(block_array)
+        ladder_array = is_ladder(block_array)
 
         other_array = is_not_air(block_array)
         if block_type_settings['water'] != 'main':
@@ -90,6 +92,8 @@ def get_arrays_from_map(root_path, session_id, x1, y1, z1, x2, y2, z2, edit_sett
             other_array -= fence_array
         if block_type_settings['torch'] != 'main':
             other_array -= torch_array
+        if block_type_settings['ladder'] != 'main':
+            other_array -= ladder_array
 
         if edit_settings['supports'] == "true":
             other_array = add_supports(other_array)
@@ -98,7 +102,7 @@ def get_arrays_from_map(root_path, session_id, x1, y1, z1, x2, y2, z2, edit_sett
 
         print("Success!")
         return {'water': water_array, 'lava': lava_array, 'glass': glass_array, 'fence': fence_array,
-                'torch': torch_array, 'other': other_array}
+                'torch': torch_array, 'ladder': ladder_array, 'other': other_array}
 
         """
     except Exception as e:

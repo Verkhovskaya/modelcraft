@@ -21,8 +21,8 @@ def render(previous_thread, root_path, session_id, level_dat_file, region_files,
     settings_text = str(settings_file.file.read()).split("\n")
     hollow, supports = settings_text[0].split(" ")
     edit_settings = {'hollow': hollow, 'supports': supports}
-    water, lava, glass, fence, torch = settings_text[2].split(" ")
-    block_type_settings = {'water': water, 'lava': lava, 'glass': glass, 'fence': fence, 'torch': torch}
+    water, lava, glass, fence, torch, ladder = settings_text[2].split(" ")
+    block_type_settings = {'water': water, 'lava': lava, 'glass': glass, 'fence': fence, 'torch': torch, 'ladder': ladder}
     block_arrays = get_arrays_from_map(root_path, session_id, x1, y1, z1, x2, y2, z2, edit_settings, block_type_settings)
     width, length, thickness, tab_size, piece_size = settings_text[1].split(" ")
     width, length, thickness, tab_size, piece_size = float(width), float(length), float(thickness), float(tab_size), int(piece_size)
