@@ -102,7 +102,7 @@ input {
 
 #div1 {
 	position: fixed;
-	margin-top: -2em;
+	margin-top: -2.5em;
 	width: 100%;
 	background-image: linear-gradient(to bottom right, #bfffdf, #cfffdf, #dfffdf, #efffdf, #ffffdf);
     margin-left: -0.5em;
@@ -130,12 +130,15 @@ input {
 }
 
 #jump1 {
+	display: none;
 	padding:1.75em;
 }
 #jump2 {
+	display: none;
 	padding:0.75em;
 }
 #jump3 {
+	display: none;
 	padding:0.75em;
 }
 
@@ -147,11 +150,11 @@ input {
 
 }
 #buttons {
-	display:inline-block;
-	vertical-align: middle;
-	margin:5%;
-	width: 35%;
-	height:80%;
+    width: 29%;
+    height: 80%;
+    display: inline-block;
+    margin-right: 10%;
+    margin-left: 10%;
 }
 
 #layout_image_selection_buttons {
@@ -170,16 +173,6 @@ input {
 
 #contact_info {
 	float: right;
-}
-
-#div4 {
-	width: 80%;
-	margin: 0em auto !important;
-	float: none !important;
-	background-color: #cfffdf;
-	padding: 0%;
-    padding-top: .1em;
-    padding-bottom: 2em;
 }
 
 #step {
@@ -208,7 +201,7 @@ input {
 	font-size:1.5em;
 }
 
-#no_results_build {
+#no_results_layout {
 	background: #e2ffc6;
 	color: #358b8b;
 	padding:3%;
@@ -220,16 +213,6 @@ input {
 	padding:1%;
 }
 
-#div5 {
-	width: 80%;
-	margin: 0em auto !important;
-	float: none !important;
-	background-color: #dfffdf;
-	padding: 0%;
-    padding-top: .1em;
-    padding-bottom: 2em;
-}
-
 #box {
 	width:50%;
 	max-width: 20em;
@@ -237,7 +220,22 @@ input {
 	margin:1%;
 }
 
-#div6 {
+#upload_map_div {
+	width: 80%;
+	margin: 0em auto !important;
+	float: none !important;
+	background-color: #dfffdf;
+	padding: 0%;
+    padding-top: .1em;
+    padding-bottom: 2em;
+    display: none;
+}
+
+#available_models_div {
+	display: none;
+}
+
+#advanced_settings_div {
 	width: 80%;
 	margin: 0em auto !important;
 	float: none !important;
@@ -245,6 +243,40 @@ input {
 	padding: 0%;
     padding-top: .1em;
     padding-bottom: 2em;
+    display: none;
+}
+
+#pick_location_div {
+	width: 80%;
+	margin: 0em auto !important;
+	float: none !important;
+	background-color: #efffdf;
+	padding: 0%;
+    padding-top: .1em;
+    padding-bottom: 2em;
+	display: none;
+}
+
+#laser_cut_div {
+	width: 80%;
+	margin: 0em auto !important;
+	float: none !important;
+	background-color: #efffdf;
+	padding: 0%;
+    padding-top: .1em;
+    padding-bottom: 2em;
+	display: none;
+}
+
+#build_div {
+	width: 80%;
+	margin: 0em auto !important;
+	float: none !important;
+	background-color: #efffdf;
+	padding: 0%;
+    padding-top: .1em;
+    padding-bottom: 2em;
+	display: none;
 }
 
 #description{
@@ -324,10 +356,10 @@ input {
 	background-color: #8cffc6;
 	color: #194141;
 	margin:5%;
-	padding-top:20%;
+	padding-top:6%;
 	padding-left:5%;
 	padding-right:5%;
-	padding-bottom:20%;
+	padding-bottom:6%;
 	outline:none;
 	width:100%;
 	white-space:normal;
@@ -426,4 +458,20 @@ input {
 #laser_cut_image_div {
 	margin-left: 1.5em;
 	margin-right: 2em;
+}
+
+#front_page_video {
+position: relative;
+padding-bottom: 56.25%;
+padding-top: 30px; height: 0; overflow: hidden;
+}
+
+#front_page_video iframe,
+#front_page_video object,
+#front_page_video embed {
+position: absolute;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
 }

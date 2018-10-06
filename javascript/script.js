@@ -1,5 +1,46 @@
 "use strict";
 
+function show_available_models() {
+    document.getElementById("available_models_div").style.display = "block";}
+
+function hide_available_models() {
+    document.getElementById("available_models_div").style.display = "none";
+}
+
+function show_make_your_own() {
+    document.getElementById("upload_map_div").style.display = "block";
+    document.getElementById("pick_location_div").style.display = "block";
+    document.getElementById("laser_cut_div").style.display = "block";
+    document.getElementById("build_div").style.display = "block";
+    document.getElementById("advanced_settings_div").style.display = "block";
+    document.getElementById("jump1").style.display = "block";
+    document.getElementById("jump2").style.display = "block";
+    document.getElementById("jump3").style.display = "block";
+}
+
+function hide_make_your_own() {
+    document.getElementById("upload_map_div").style.display = "none";
+    document.getElementById("pick_location_div").style.display = "none";
+    document.getElementById("laser_cut_div").style.display = "none";
+    document.getElementById("build_div").style.display = "none";
+    document.getElementById("advanced_settings_div").style.display = "none";
+    document.getElementById("jump1").style.display = "none";
+    document.getElementById("jump2").style.display = "none";
+    document.getElementById("jump3").style.display = "none";
+}
+
+function click_make_your_own() {
+    hide_available_models();
+    show_make_your_own();
+    jump_to("jump1");
+}
+
+function click_available_models() {
+    hide_make_your_own();
+    show_available_models();
+    jump_to("jump4");
+}
+
 function show_error_message(location, message) {
     document.getElementById(location + "_error_div").style.display = "block";
     document.getElementById(location + "_error_p").innerHTML = message;

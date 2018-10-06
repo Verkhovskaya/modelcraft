@@ -18,6 +18,7 @@ def root():
     text = open(root_path + "/html/header.html", "r").read() + \
            open(root_path + "/html/session_id.html", "r").read().replace("$$session_id$$", session_id) + \
            open(root_path + "/html/0_description.html", "r").read() + \
+           open(root_path + "/html/available_models.html", "r").read() + \
            open(root_path + "/html/1_upload_map.html", "r").read() + \
            open(root_path + "/html/2_pick_location.html", "r").read() + \
            open(root_path + "/html/advanced_settings.html", "r").read() + \
