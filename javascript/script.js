@@ -245,8 +245,12 @@ function render_color_section(color_id) {
     location.appendChild(new_div);
 
     let title = document.createElement('h1');
-    title.appendChild(document.createTextNode("Color " + color_id.toString()));
-    // new_div.appendChild(title);
+    if (color_id.toString() == "other") {
+        title.appendChild(document.createTextNode("main"));
+    } else {
+        title.appendChild(document.createTextNode(color_id.toString()));
+    }
+    new_div.appendChild(title);
 }
 
 function render_sheet(color_id, sheet_id) {
@@ -254,6 +258,33 @@ function render_sheet(color_id, sheet_id) {
     let new_image = document.createElement('img');
     new_image.src = "/cutout_image/" + get_session_id() + "/" + color_id.toString() + "/" + sheet_id.toString() + "/" + cache_breaker();
     div.appendChild(new_image);
+}
+
+function render_download_dxf_button(color) {
+    let location = document.getElementById("color_" + color);
+
+    let new_div = document.createElement('div');
+    new_div.id = "buttons";
+    location.appendChild(new_div);
+
+    let form = document.createElement('form');
+    form.action = "/download_laser_cut_dxf/" + get_session_id() + "/" + color;
+    form.target = "_blank";
+    new_div.appendChild(form);
+
+    let input = document.createElement('input');
+    input.id="download_dxf_input_" + color;
+    input.type="submit";
+    input.value="Download as dxf";
+    form.appendChild(input);
+    /*
+    <div id="buttons">
+        <form action="/download_laser_cut_dxf/$$session_id$$" target="_blank">
+            <input id="download_dxf_input" type="submit" value="Download as dxf" style="display: none"/>
+        </form>
+        <label for="download_dxf_input" style="padding: 1em">Download as dxf</label>
+    </div>
+    */
 }
 
 
@@ -277,6 +308,7 @@ function reload_cutout_images() {
                     console.log("Rendering sheet");
                     render_sheet(color, sheet);
                 }
+                render_download_dxf_button(color);
             }
         }
     }

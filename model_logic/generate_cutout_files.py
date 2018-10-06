@@ -18,7 +18,7 @@ from dxfwrite import DXFEngine as dxf
 colors = {0: (255, 255, 255), 1: (139,105,20), 2: (0, 0, 255), 3: (100, 100, 100)}
 
 
-def generate_laser_cut_files(root_path, session_id, block_array_one_color, piece_max, color_id, material_width, material_length, side_length, tab_size, type=["dxf"]):
+def generate_laser_cut_files(root_path, session_id, block_arrays, piece_max, color_id, material_width, material_length, side_length, tab_size, block_type_settings, type=["dxf"]):
     units_x = int(material_length/side_length) - 2
     units_y = int(material_width/side_length) - 2
 
@@ -27,22 +27,24 @@ def generate_laser_cut_files(root_path, session_id, block_array_one_color, piece
         shutil.rmtree(image_directory)
     os.mkdir(image_directory)
 
-    set_render_state(root_path, session_id, "Getting cutouts from map",20)
-    cutouts = get_cutouts(block_array_one_color, piece_max)
-    cutouts_placed_by_sheets = place_basic(root_path, session_id, cutouts, units_x, units_y)
-    set_render_state(root_path, session_id, "Adding tabs",90)
-    number_of_sheets_generated = len(cutouts_placed_by_sheets)
-    all_lines = []
-    for sheet_id in range(1, number_of_sheets_generated+1):
-        cutouts_in_sheet = list(cutouts_placed_by_sheets[sheet_id-1])
-        lines = get_outlines(cutouts_in_sheet)
-        lines_with_tabs = add_tabs(lines, tab_size/side_length)
-        generate_png(root_path, session_id, color_id, sheet_id, units_x, units_y, 10, lines_with_tabs)
-        for line in lines_with_tabs:
-            all_lines.append(((line[0][0]*side_length, line[0][1]*side_length+(sheet_id-1)*material_width*1.2),
-                              (line[1][0]*side_length, line[1][1]*side_length+(sheet_id-1)*material_width*1.2)))
-    set_render_state(root_path, session_id, "Generating dxf",95)
-    generate_dxf(root_path, session_id, all_lines)
+    for block_type in block_arrays.keys():
+        if block_type == "other" or block_type_settings[block_type] == "separate":
+            set_render_state(root_path, session_id, "Getting cutouts from map",20)
+            cutouts = get_cutouts(block_arrays[block_type], piece_max)
+            cutouts_placed_by_sheets = place_basic(root_path, session_id, cutouts, units_x, units_y)
+            set_render_state(root_path, session_id, "Adding tabs",90)
+            number_of_sheets_generated = len(cutouts_placed_by_sheets)
+            all_lines = []
+            for sheet_id in range(1, number_of_sheets_generated+1):
+                cutouts_in_sheet = list(cutouts_placed_by_sheets[sheet_id-1])
+                lines = get_outlines(cutouts_in_sheet)
+                lines_with_tabs = add_tabs(lines, tab_size/side_length)
+                generate_png(root_path, session_id, color_id, sheet_id, units_x, units_y, 10, lines_with_tabs, block_type)
+                for line in lines_with_tabs:
+                    all_lines.append(((line[0][0]*side_length, line[0][1]*side_length+(sheet_id-1)*material_width*1.2),
+                                      (line[1][0]*side_length, line[1][1]*side_length+(sheet_id-1)*material_width*1.2)))
+            set_render_state(root_path, session_id, "Generating dxf",95)
+            generate_dxf(root_path, session_id, all_lines, block_type)
 
 
 def get_cutouts(block_array, piece_max):
@@ -221,8 +223,8 @@ def get_outlines(cutouts):
     return list(all_lines)
 
 
-def generate_dxf(root_path, session_id, all_lines):
-    drawing = dxf.drawing(root_path + "/data/" + session_id + '/cutout.dxf')
+def generate_dxf(root_path, session_id, all_lines, block_type):
+    drawing = dxf.drawing(root_path + "/data/" + session_id + '/' + block_type + '.dxf')
     drawing.add_layer('LINES')
 
     for line in all_lines:
@@ -232,7 +234,7 @@ def generate_dxf(root_path, session_id, all_lines):
     drawing.save()
 
 
-def generate_png(root_path, session_id, color_id, sheet_id, units_x, units_y, render_unit_length, lines):
+def generate_png(root_path, session_id, color_id, sheet_id, units_x, units_y, render_unit_length, lines, block_type):
     image = np.zeros(((units_y+2) * render_unit_length, (units_x + 2) * render_unit_length, 3), dtype=np.uint8)
     for line in lines:
         start = min(line[0][0], line[1][0])+1, min(line[0][1], line[1][1])+1
@@ -241,5 +243,5 @@ def generate_png(root_path, session_id, color_id, sheet_id, units_x, units_y, re
               int(render_unit_length*start[0])-2:int(render_unit_length*end[0])+2] = (255, 255, 255)
 
     img = Image.fromarray(image, 'RGB')
-    img_name = root_path + "/data/" + session_id + "/cutout_images/" + str(color_id) + "_" + str(sheet_id) + "_cutout.png"
+    img_name = root_path + "/data/" + session_id + "/cutout_images/" + block_type + "_" + str(sheet_id) + "_cutout.png"
     img.save(img_name)

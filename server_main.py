@@ -84,9 +84,9 @@ def serve_layout_pdf(session_id):
 def stylesheet(session_id, color_id, sheet_id, cache_breaker):
     return static_file(color_id + "_" + sheet_id + "_cutout.png", root=root_path + "/data/" + session_id + "/cutout_images")
 
-@route("/download_laser_cut_dxf/<session_id>")
-def dxf(session_id):
-    return static_file("cutout.dxf", root=root_path + "/data/"+session_id, download="cutout.dxf")
+@route("/download_laser_cut_dxf/<session_id>/<color>")
+def dxf(session_id, color):
+    return static_file(color + ".dxf", root=root_path + "/data/"+session_id, download=color + ".dxf")
 
 @route('/render_state/<session_id>/<cache_breaker>')
 def renderstate(session_id, cache_breaker):
