@@ -85,9 +85,9 @@ def serve_layout_pdf(session_id):
 def stylesheet(session_id, color_id, sheet_id, cache_breaker):
     return static_file(color_id + "_" + sheet_id + "_cutout.png", root=root_path + "/data/" + session_id + "/cutout_images")
 
-@route("/download_laser_cut_dxf/<session_id>/<color>")
-def dxf(session_id, color):
-    return static_file(color + ".dxf", root=root_path + "/data/"+session_id, download=color + ".dxf")
+@route("/download_laser_cut_dxf/<session_id>")
+def dxf(session_id):
+    return static_file("cutout.dxf", root=root_path + "/data/"+session_id, download="cutout.dxf")
 
 @route('/render_state/<session_id>/<cache_breaker>')
 def renderstate(session_id, cache_breaker):
@@ -116,6 +116,32 @@ def stop():
 @route('/sitemap')
 def corners_graphic():
     return static_file("sitemap.xml", root=root_path)
+
+
+# Models logic
+@route('/available_models')
+def available_models():
+    model_ids = filter(lambda x: '.' not in x, os.listdir(root_path + "/models"))
+    model_names = [open(root_path + "/models/" + model_id + "/name.txt").read() for model_id in model_ids]
+    model_descriptions = [open(root_path + "/models/" + model_id + "/description.txt").read() for model_id in model_ids]
+    models = [model_ids[i]+"%%%"+model_names[i]+"%%%"+model_descriptions[i] for i in range(len(model_ids))]
+    return "\n".join(models)
+
+
+@route('/model_icon/<model_id>')
+def model_icon(model_id):
+    return static_file("icon.png", root=root_path + "/models/"+model_id)
+
+
+@route('/download_model_laser_cut_dxf/<model_id>')
+def download_model_laser_cut_dxf(model_id):
+    return static_file("cutout.dxf", root=root_path + "/models/" + model_id)
+
+
+@route('/download_model_layout_pdf/<model_id>')
+def download_model_laser_cut_dxf(model_id):
+    return static_file("layout.pdf", root=root_path + "/models/" + model_id)
+
 
 try:
     run(host='0.0.0.0', port=80, debug=True, server="paste")

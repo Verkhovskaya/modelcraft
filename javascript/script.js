@@ -1,7 +1,94 @@
 "use strict";
 
+
+
 function show_available_models() {
-    document.getElementById("available_models_div").style.display = "block";}
+    document.getElementById("available_models_div").style.display = "block";
+
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.onreadystatechange = function () {
+        if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+            let outer = document.getElementById("models");
+            outer.innerHTML = "";
+            let models = xmlHttp.responseText.split("\n");
+            for (let i=0; i<models.length; i++) {
+                console.log(models[i]);
+                add_model(models[i].split("%%%"));
+            }
+        }
+    }
+    xmlHttp.open("GET", "/available_models", true); // true for asynchronous
+    xmlHttp.send(null);
+}
+
+function add_model(model_info) {
+    let model_id = model_info[0];
+    let model_name = model_info[1];
+    let model_description = model_info[2];
+    let outer = document.getElementById("models");
+
+    let container = document.createElement("div");
+    container.className = "model_div";
+    outer.appendChild(container);
+
+    let left_side = document.createElement("div");
+    left_side.className = "left_side";
+    container.appendChild(left_side);
+
+    let newImg = document.createElement("img");
+    newImg.src = "/model_icon/" + model_id;
+    newImg.className = "model_icon";
+    left_side.appendChild(newImg);
+
+    let right_side = document.createElement("div");
+    right_side.className = "right_side";
+    container.appendChild(right_side);
+
+    let title = document.createElement('h1');
+    title.appendChild(document.createTextNode(model_name));
+    right_side.appendChild(title);
+
+    let description = document.createElement('p');
+    description.appendChild(document.createTextNode(model_description));
+    right_side.appendChild(description);
+
+    let buttons_div = document.createElement("div");
+    newImg.className = "buttons_div";
+    right_side.appendChild(buttons_div);
+
+    let buttons = document.createElement("div");
+    buttons.className = "model_buttons";
+
+    let form = document.createElement("form");
+    form.action = "/download_model_laser_cut_dxf/" + model_id;
+    form.target = "_blank";
+    let input = document.createElement("input");
+    input.type = "submit";
+    input.style = "display: none";
+    input.id = "download_model_dxf_" + model_id;
+    form.appendChild(input);
+    buttons.appendChild(form);
+    let label = document.createElement("label");
+    label.htmlFor = "download_model_dxf_" + model_id;
+    label.appendChild(document.createTextNode("Cutout\n(.dxf)"));
+    buttons.appendChild(label);
+
+    let form_right = document.createElement("form");
+    form_right.action = "/download_model_layout_pdf/" + model_id;
+    form_right.target = "_blank";
+    let input_right = document.createElement("input");
+    input_right.type = "submit";
+    input_right.style = "display: none";
+    input_right.id = "download_model_pdf_" + model_id;
+    form_right.appendChild(input_right);
+    buttons.appendChild(form_right);
+    let label_right = document.createElement("label");
+    label_right.htmlFor = "download_model_pdf_" + model_id;
+    label_right.appendChild(document.createTextNode("Layout\n(.pdf)"));
+    buttons.appendChild(label_right);
+
+    container.append(buttons);
+}
 
 function hide_available_models() {
     document.getElementById("available_models_div").style.display = "none";
@@ -313,20 +400,6 @@ function render_download_dxf_button(color) {
     form.action = "/download_laser_cut_dxf/" + get_session_id() + "/" + color;
     form.target = "_blank";
     new_div.appendChild(form);
-
-    let input = document.createElement('input');
-    input.id="download_dxf_input_" + color;
-    input.type="submit";
-    input.value="Download as dxf";
-    form.appendChild(input);
-    /*
-    <div id="buttons">
-        <form action="/download_laser_cut_dxf/$$session_id$$" target="_blank">
-            <input id="download_dxf_input" type="submit" value="Download as dxf" style="display: none"/>
-        </form>
-        <label for="download_dxf_input" style="padding: 1em">Download as dxf</label>
-    </div>
-    */
 }
 
 

@@ -27,6 +27,8 @@ def generate_laser_cut_files(root_path, session_id, block_arrays, piece_max, col
         shutil.rmtree(image_directory)
     os.mkdir(image_directory)
 
+    lines_dict = {}
+
     for block_type in block_arrays.keys():
         if block_type == "other" or block_type_settings[block_type] == "separate":
             set_render_state(root_path, session_id, "Getting cutouts from map",20)
@@ -44,7 +46,9 @@ def generate_laser_cut_files(root_path, session_id, block_arrays, piece_max, col
                     all_lines.append(((line[0][0]*side_length, line[0][1]*side_length+(sheet_id-1)*material_width*1.2),
                                       (line[1][0]*side_length, line[1][1]*side_length+(sheet_id-1)*material_width*1.2)))
             set_render_state(root_path, session_id, "Generating dxf",95)
-            generate_dxf(root_path, session_id, all_lines, block_type)
+            lines_dict[block_type] = all_lines
+
+    generate_dxf(root_path, session_id, lines_dict, material_length)
 
 
 def get_cutouts(block_array, piece_max):
@@ -223,14 +227,29 @@ def get_outlines(cutouts):
     return list(all_lines)
 
 
-def generate_dxf(root_path, session_id, all_lines, block_type):
-    drawing = dxf.drawing(root_path + "/data/" + session_id + '/' + block_type + '.dxf')
+def generate_dxf(root_path, session_id, lines_dict, sheet_length):
+    x_offset = int(sheet_length * 1.1)
+    y_offset = 30
+    keys = lines_dict.keys()
+
+
+    drawing = dxf.drawing(root_path + "/data/" + session_id + '/cutout.dxf')
     drawing.add_layer('LINES')
 
-    for line in all_lines:
-        start = (line[0][0], line[0][1])
-        end = (line[1][0], line[1][1])
-        drawing.add(dxf.line(start, end, color=2))
+    for i in range(len(keys)):
+        key = keys[i]
+        for line in lines_dict[key]:
+            start = (line[0][0]+x_offset*i, line[0][1]+y_offset)
+            end = (line[1][0]+x_offset*i, line[1][1]+y_offset)
+            drawing.add(dxf.line(start, end, color=7, layer='LINES'))
+
+    drawing.add_layer('TEXTLAYER', color=2)
+
+    for i in range(len(keys)):
+        key = keys[i]
+        drawing.add(dxf.text(key, insert=(i*x_offset, 0), layer='TEXTLAYER', height=25))
+
+    drawing.add_vport('*ACTIVE', upper_right=(100,100), center_point=(50,50), grid_spacing=(1,1), snap_spacing=(1,1), aspect_ratio=20)
     drawing.save()
 
 

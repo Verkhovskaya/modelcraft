@@ -55,6 +55,9 @@ def draw_level(pixel_size, block_arrays, z, section_locations, block_type_settin
 
 
 def generate_layout_files(root_path, session_id, block_arrays, side_length, block_type_settings, type=["pdf"]):
+    for key in block_arrays.keys():
+        block_arrays[key] = np.transpose(block_arrays[key], (1, 0, 2))
+
     section_locations = get_array_section_positions(block_arrays['other'], 10)
     image_path = root_path + "/data/" + session_id + "/layout_images"
     if os.path.exists(image_path):
