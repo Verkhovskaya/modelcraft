@@ -1,3 +1,0 @@
-[submodule "model_logic/external_libraries/pymclevel"]
-	path = model_logic/external_libraries/pymclevel
-	url = https://github.com/mcedit/pymclevel.git

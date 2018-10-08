@@ -1,8 +1,8 @@
 <a name="upload_map">
-    <div id="div4">
-        <h1 id="step"> Step 1: Upload a map</h1>
+    <div id="upload_map_div">
+        <h1 class="step_header_strip"> Step 1: Upload a map</h1>
         <p id="subheader"> </p>
-        <p id="substep1"> What's your operating system? </p>
+        <p id="substep1"> What's your computer's operating system? </p>
         <p id="instructions"> If you have a <b>PC</b>, your minecraft maps are in  %APPDATA%\.minecraft </p>
         <p id="extra"> (Click start, type %appdata%\.minecraft, then select the top search result) </p>
         <br/>
@@ -22,7 +22,6 @@
                 Upload the level.dat file: <input type="file" name="file" id="level_dat" class="inputfile" autocomplete="on"/> <label for="level_dat">Choose a file</label> <br/> <br/>
                 Upload all files in the region folder: <input type="file" name="file" id="region" class="inputfile" multiple autocomplete="on"/> <label for="region">Choose files</label> <br/> <br/> <br/>
             </form>
-
         </a>
 
         <button id="continue1" onclick="finish_step_1()">Continue</button>

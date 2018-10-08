@@ -100,27 +100,52 @@ input {
   width: 100%
 }
 
-#div1 {
+/* NEW CSS STARTS HERE */
+
+.step_header_strip {
+	background: #122f2f;
+	color: #358b8b;
+}
+
+#header_div {
 	position: fixed;
-	margin-top: -2em;
+	margin-top: -2.5em;
 	width: 100%;
 	background-image: linear-gradient(to bottom right, #bfffdf, #cfffdf, #dfffdf, #efffdf, #ffffdf);
     margin-left: -0.5em;
     padding-left: 0.5em;
     padding-top:1.7em;
     margin-right: 0;
+	z-index: 50;  /* Anna: This lets it cover the YouTube video and various img elements. IDK why :) */
 }
 
-#title {
-
+#header_div #title {
+	float: left;
+	margin-bottom:-0.7em;
 }
 
-#contact_info {
+#header_div #h1 {
+	clear: right;
+	text-decoration: none;
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 200;
+    color: black;
+    font-size: 2em;
+    margin: 0;
+    padding: 0.3em
+}
+
+#header_div #contact_info {
+	float: right;
+	margin: 0;
+    color: #194141;
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 100;
 	padding-top: 1em;
 	padding-right: 2em;
 }
 
-#div2{
+#description_div{
 	width: 80%;
 	margin: 0em auto !important;
 	float: none !important;
@@ -129,13 +154,113 @@ input {
     padding-top: 2.7em;
 }
 
-#jump1 {
+#description_div #left_button_div {
+	width: 50%;
+	float: left;
+}
+
+#description_div #right_button_div {
+	width: 50%;
+	overflow: hidden;
+}
+
+#description_div button {
+	font-family: 'Quicksand', sans-serif;
+    font-weight: lighter;
+    border: none;
+    background-color: #8cffc6;
+    color: #194141;
+    padding-top: 6%;
+    padding-left: 5%;
+    padding-right: 5%;
+    padding-bottom: 6%;
+    outline: none;
+    white-space: normal;
+    text-align: center;
+    font-size: 1.5em;
+    border-radius: 10px;
+    display: block;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 1em;
+	margin-bottom: 1em;
+}
+
+#description_div #jump1 {
+	display: none;
 	padding:1.75em;
 }
+
+#front_page_video {
+position: relative;
+padding-bottom: 56.25%;
+padding-top: 30px; height: 0; overflow: hidden;
+}
+
+#front_page_video iframe,
+#front_page_video object,
+#front_page_video embed {
+position: absolute;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+}
+
+.model_div img {
+	width: 250pt;
+    border: 2em solid black;
+    margin: 3em;
+	float: left;
+}
+
+.model_div {
+	overflow: auto;
+	position: relative;
+}
+
+.model_div h1 {
+	margin-top: 1em;
+}
+
+.model_div p {
+
+}
+
+.model_div .button_left {
+	margin: 1em;
+}
+
+.model_div .button_right {
+	margin: 1em;
+}
+
+.model_div label {
+	background-color: #9dffbd;
+	color: #194141;
+	padding:1%;
+	border-radius: 5px;
+    float:left;
+   margin-right:5px;
+}
+
+.model_div .model_buttons {
+	position: relative;
+	bottom: 0;
+}
+
+.model_div p {
+	padding-bottom: 2em;
+}
+
+
+
 #jump2 {
+	display: none;
 	padding:0.75em;
 }
 #jump3 {
+	display: none;
 	padding:0.75em;
 }
 
@@ -147,11 +272,11 @@ input {
 
 }
 #buttons {
-	display:inline-block;
-	vertical-align: middle;
-	margin:5%;
-	width: 35%;
-	height:80%;
+    width: 29%;
+    height: 80%;
+    display: inline-block;
+    margin-right: 10%;
+    margin-left: 5%;
 }
 
 #layout_image_selection_buttons {
@@ -170,21 +295,6 @@ input {
 
 #contact_info {
 	float: right;
-}
-
-#div4 {
-	width: 80%;
-	margin: 0em auto !important;
-	float: none !important;
-	background-color: #cfffdf;
-	padding: 0%;
-    padding-top: .1em;
-    padding-bottom: 2em;
-}
-
-#step {
-	background: #122f2f;
-	color: #358b8b;
 }
 
 #substep1 {
@@ -208,7 +318,7 @@ input {
 	font-size:1.5em;
 }
 
-#no_results_build {
+#no_results_layout {
 	background: #e2ffc6;
 	color: #358b8b;
 	padding:3%;
@@ -220,16 +330,6 @@ input {
 	padding:1%;
 }
 
-#div5 {
-	width: 80%;
-	margin: 0em auto !important;
-	float: none !important;
-	background-color: #dfffdf;
-	padding: 0%;
-    padding-top: .1em;
-    padding-bottom: 2em;
-}
-
 #box {
 	width:50%;
 	max-width: 20em;
@@ -237,7 +337,29 @@ input {
 	margin:1%;
 }
 
-#div6 {
+#upload_map_div {
+	width: 80%;
+	margin: 0em auto !important;
+	float: none !important;
+	background-color: #dfffdf;
+	padding: 0%;
+    padding-top: .1em;
+    padding-bottom: 2em;
+    display: none;
+}
+
+#available_models_div {
+	width: 80%;
+	margin: 0em auto !important;
+	float: none !important;
+	background-color: #dfffdf;
+	padding: 0%;
+    padding-top: .1em;
+    padding-bottom: 2em;
+    display: none;
+}
+
+#advanced_settings_div {
 	width: 80%;
 	margin: 0em auto !important;
 	float: none !important;
@@ -245,6 +367,40 @@ input {
 	padding: 0%;
     padding-top: .1em;
     padding-bottom: 2em;
+    display: none;
+}
+
+#pick_location_div {
+	width: 80%;
+	margin: 0em auto !important;
+	float: none !important;
+	background-color: #efffdf;
+	padding: 0%;
+    padding-top: .1em;
+    padding-bottom: 2em;
+	display: none;
+}
+
+#laser_cut_div {
+	width: 80%;
+	margin: 0em auto !important;
+	float: none !important;
+	background-color: #efffdf;
+	padding: 0%;
+    padding-top: .1em;
+    padding-bottom: 2em;
+	display: none;
+}
+
+#build_div {
+	width: 80%;
+	margin: 0em auto !important;
+	float: none !important;
+	background-color: #efffdf;
+	padding: 0%;
+    padding-top: .1em;
+    padding-bottom: 2em;
+	display: none;
 }
 
 #div6 {
@@ -266,19 +422,24 @@ input {
 	font-weight: 100
 }
 
-#instructions {
+#instructions, #loading_text_laser_cut, #loading_text_layout {
 	padding-top:3%;
 	padding-left: 3%;
 	font-weight: 400;
 	font-size:1.3em;
 }
 
-#loading_bar {
-	padding-top:3%;
-	padding-left: 3%;
-	padding-bottom:50em;
-	font-weight: 400;
-	font-size:1.3em;
+#loading_bar_laser_cut, #loading_bar_layout {
+	background-color: red;
+	height: 100%;
+}
+
+#loading_bar_frame {
+	margin-left: 10%;
+	width: 80%;
+	height: 2em;
+	background-color: white;
+	margin-top: 1.5em;
 }
 
 #level_dat{
@@ -329,10 +490,10 @@ input {
 	background-color: #8cffc6;
 	color: #194141;
 	margin:5%;
-	padding-top:20%;
+	padding-top:6%;
 	padding-left:5%;
 	padding-right:5%;
-	padding-bottom:20%;
+	padding-bottom:6%;
 	outline:none;
 	width:100%;
 	white-space:normal;
@@ -402,9 +563,6 @@ img {
 	margin:1em;
 }
 
-input {
-
-}
 
 .error_message {
     width: 100%;
