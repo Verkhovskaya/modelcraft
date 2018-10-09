@@ -1,7 +1,5 @@
 "use strict";
 
-document.body.scrollTop = document.documentElement.scrollTop = 0;
-
 function show_available_models() {
     document.getElementById("available_models_div").style.display = "block";
 
