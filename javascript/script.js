@@ -1,7 +1,6 @@
 "use strict";
 
 
-
 function show_available_models() {
     document.getElementById("available_models_div").style.display = "block";
 

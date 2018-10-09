@@ -1,11 +1,12 @@
-from bottle import route, request, static_file, run, post
+from bottle import route, request, static_file, run, post, response
 import uuid
 import sys
 import time
 import os
 import model_logic
 import threading
-from model_logic import file_utils
+from model_logic import file_utils, admin_utils
+import time
 
 root_path = str(os.getcwd())
 if root_path == "/root":
@@ -14,7 +15,6 @@ if root_path == "/root":
 @route('/')
 def root():
     session_id = str(uuid.uuid4())
-    file_utils.create_session(root_path, session_id)
     text = open(root_path + "/html/header.html", "r").read() + \
            open(root_path + "/html/session_id.html", "r").read().replace("$$session_id$$", session_id) + \
            open(root_path + "/html/0_description.html", "r").read() + \
@@ -35,10 +35,12 @@ def root():
 render_threads = {}
 @post('/request_render')
 def request_render():
-    print("requesting render")
-    level_dat_file = request.files["level_dat"]
     session_id_file = request.files["session_id"]
     session_id = str(session_id_file.file.read())
+    if not os.path.exists(root_path + "/data/" + session_id):
+        file_utils.create_session(root_path, session_id, request)
+    print("requesting render")
+    level_dat_file = request.files["level_dat"]
     position_file = request.files["position"]
     settings_file = request.files["settings"]
     region_file_names = filter(lambda x: x not in ["level_dat", "session_id", "position", "settings"], request.files.keys())
@@ -141,6 +143,77 @@ def download_model_laser_cut_dxf(model_id):
 @route('/download_model_layout_pdf/<model_id>')
 def download_model_laser_cut_dxf(model_id):
     return static_file("layout.pdf", root=root_path + "/models/" + model_id)
+
+
+# ADMIN STUFF
+def get_user_info(request):
+    return ""
+
+
+@route('/admin_js')
+def admin_js():
+    return static_file("admin.js", root=root_path + "/javascript")
+
+@route('/admin')
+def admin():
+    if request.get_cookie("password") == open(root_path + "/secret_data/password.txt").read():
+        return open(root_path + "/html/admin/home.html")
+    else:
+        return open(root_path + "/html/admin/login.html").read()
+
+
+@post('/admin/login')
+def admin_login():
+    password = request.forms.get('password')
+    if password == open(root_path + "/secret_data/password.txt").read():
+        response.set_cookie("password", password)
+    return open(root_path + "/html/admin/home.html").read()
+
+
+@route('/admin/home')
+def admin_home():
+    if request.get_cookie("password") != open(root_path + "/secret_data/password.txt").read():
+        time.sleep(5)
+        return "INVALID PASSWORD"
+    else:
+        return open(root_path + "/html/admin/home.html").read()
+
+
+@route("/admin/session_infos")
+def admin_session_infos():
+    if request.get_cookie("password") != open(root_path + "/secret_data/password.txt").read():
+        time.sleep(5)
+        return "INVALID PASSWORD"
+    else:
+        return "%%%".join(admin_utils.get_all_session_infos(root_path, request))
+
+
+@route("/admin/cutout_dxf/<session_id>")
+def admin_cutout_dxf(session_id):
+    if request.get_cookie("password") != open(root_path + "/secret_data/password.txt").read():
+        time.sleep(5)
+        return "INVALID PASSWORD"
+    else:
+        return static_file("cutout.dxf", root=root_path + "/data/" + session_id)
+
+
+@route("/admin/layout_pdf/<session_id>")
+def admin_layout_pdf(session_id):
+    if request.get_cookie("password") != open(root_path + "/secret_data/password.txt").read():
+        time.sleep(5)
+        return "INVALID PASSWORD"
+    else:
+        return static_file("layout.pdf", root=root_path + "/data/" + session_id)
+
+
+@route("/admin/session_info/<session_id>")
+def session_info(session_id):
+    if request.get_cookie("password") != open(root_path + "/secret_data/password.txt").read():
+        time.sleep(5)
+        return "INVALID PASSWORD"
+    else:
+        return open("requester_info.txt", root=root_path + "/data/" + session_id).read()
+
 
 
 try:

@@ -1,8 +1,9 @@
 import os
 import shutil
+import time
+import datetime
 
-
-def create_session(root_path, session_id):
+def create_session(root_path, session_id, request):
     data_directory = root_path + "/data"
     if not os.path.exists(data_directory):
         os.mkdir(data_directory)
@@ -15,6 +16,12 @@ def create_session(root_path, session_id):
     if not os.path.exists(image_directory):
         os.mkdir(image_directory)
 
+    request_info = open(session_directory + "/session_info.txt", "w")
+    timestamp = datetime.datetime.fromtimestamp(time.time())\
+        .strftime('%Y-%m-%d %H:%M:%S')
+    request_info.write(timestamp + "\n")
+    request_info.write(request.environ.get('REMOTE_ADDR'))
+    request_info.close()
 
 def save_files(root_path, session_id, level_dat_file, region_files, position_file, settings_file):
     if not position_file:
