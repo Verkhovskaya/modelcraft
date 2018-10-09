@@ -27,10 +27,10 @@ h3 {
 	font-size: 1.5em;
 	font-family: 'Quicksand', sans-serif;
 	text-align:center;
-	color: #358b8b;
+	color: #3c9d9d;
 	background: #122f2f;
 	margin:0;
-	padding:5%;
+	padding:4%;
 }
 
 body {
@@ -52,15 +52,27 @@ textarea {
 	font-size: 14pt;
 }
 
-label {
-	background-color: #9dffbd;
+#upload_map_div label {
+	background-color: #ceb7ff;
 	color: #194141;
 	padding:1%;
 	border-radius: 5px;
 }
 
-label:hover {
-	background-color: #84ffac;
+#upload_map_div label:hover {
+	background-color: #bd9dff;
+}
+
+#advanced_settings_div label {
+	border-radius: 5px;
+	margin: 1em;
+	margin-left: 5%; 
+	padding: 1em; 
+	background-color: #afafff;
+}
+
+#advanced_settings_div label:hover {
+	background-color: #9595ff;
 }
 
 html {
@@ -96,6 +108,7 @@ input {
 
 .sticky {
   position: fixed;
+  /*margin-left:-1.3em;*/
   top: 0;
   width: 100%
 }
@@ -114,9 +127,10 @@ input {
 	background-image: linear-gradient(to bottom right, #bfffdf, #cfffdf, #dfffdf, #efffdf, #ffffdf);
     margin-left: -0.5em;
     padding-left: 0.5em;
-    padding-top:1.7em;
+    padding-top:3em;
     margin-right: 0;
-	z-index: 50;  /* Anna: This lets it cover the YouTube video and various img elements. IDK why :) */
+	z-index: 50;  /* Anna: This lets it cover the YouTube video and various img elements. IDK why :) 
+					 Annie: It probably brings it in front of everything if you consider the z axis out of the screen (ie. your layers) */
 }
 
 #header_div #title {
@@ -145,13 +159,163 @@ input {
 	padding-right: 2em;
 }
 
-#description_div{
+#buffer_div {
+	position: fixed;
+	margin-top: -2.5em;
+	width: 100%;
+    margin-left: -0.5em;
+    padding-left: 0.5em;
+    padding-top:1.8em;
+    padding-bottom: 8em;
+    margin-bottom: 4.5em;
+    margin-right: 0;
+}
+
+#behind_header {
+	padding-top:6.8em;
+}
+
+#navigation_buttons {
+	margin-top: 4em;
+	padding:0em;
+	padding-left: 1em;
+	height:4em;
+	background-color: #ffcfaf;
+	margin-left:-1.3em;
+	z-index: 50;
+}
+
+#navigation_buttons button {
+	display: inline-block;
+	border: none;
+	padding:0em;
+	background-color: #ffcfaf;
+	height:100%;
+	font-family: 'Quicksand', sans-serif;
+    font-weight: lighter;
+    font-size:150%;
+	margin:0em;
+	width:100%;
+	outline:none;
+	white-space:normal;
+	vertical-align:top;
+	text-align:center;
+}
+
+#landing_page {
+	padding:0em;
+	margin-right:-5px;
+	margin-left:-5px;
+	width:33%;
+	height:100%;
+	display: inline-block;
+	background-color: #ffcfaf;
+
+}
+
+#available_models {
+	padding:0em;
+	margin-right:-5px;
+	width:33%;
+	height:100%;
+	display: inline-block;
+	background-color: #ffcfbf;
+}
+
+#make_your_own {
+	padding:0em;
+	margin-right:-5px;
+	width:34%;
+	height:100%;
+	display: inline-block;
+	background-color: #ffcfcf;
+}
+
+#another_section1{
+	padding:0em;
+	margin-right:-5px;
+	width:17%;
+	height:100%;
+	display: inline-block;
+	background-color: #ffcfdf;
+}
+
+#another_section2 {
+	padding:0em;
+	margin-right:-4px;
+	width:17%;
+	height:100%;
+	display: inline-block;
+	background-color: #ffcfef;
+}
+
+#another_section3 {
+	padding:0em;
+	margin-right:-4px;
+	width:17%;
+	height:100%;
+	display: inline-block;
+	background-color: #ffcfff;
+}
+
+#landing_page button {
+	background-color: #7f4925;
+	color: #ffc096;
+}
+
+#available_models button {
+	color: #ffbca6;
+	background-color: #7f412d;
+}
+
+#make_your_own button {
+	color: #ffb6b6;
+	background-color: #7f3535;
+}
+
+#another_section1 button {
+	background-color: #ffcfdf;
+}
+
+#another_section2 button {
+	background-color: #ffcfef;
+}
+
+#another_section3 button {
+	background-color: #ffcfff;
+}
+
+#landing_page button:hover {
+	background-color: #99572c;
+	width:100%;
+}
+
+#available_models button:hover {
+	background-color: #994e36;
+	width:100%;
+}
+
+#make_your_own button:hover {
+	background-color: #993f3f;
+	width:100%;
+}
+
+#description_div {
 	width: 80%;
 	margin: 0em auto !important;
 	float: none !important;
 	background-color: #bfffdf;
 	padding: 0%;
-    padding-top: 2.7em;
+    padding-top: 0em;
+}
+
+#description_div #description{
+	padding-bottom:1em;
+	background-color: #194141;
+	font-family: 'Quicksand', sans-serif;
+	font-size: 1.1em;
+	color: #c5e6e6;
+	font-weight: 100
 }
 
 #description_div #left_button_div {
@@ -171,8 +335,8 @@ input {
     background-color: #8cffc6;
     color: #194141;
     padding-top: 6%;
-    padding-left: 5%;
-    padding-right: 5%;
+    padding-left: 15%;
+    padding-right: 15%;
     padding-bottom: 6%;
     outline: none;
     white-space: normal;
@@ -186,14 +350,20 @@ input {
 	margin-bottom: 1em;
 }
 
+#description_div button:hover {
+	background-color: #73ffb9;
+}
+
 #description_div #jump1 {
 	display: none;
-	padding:1.75em;
+	padding:8em;
 }
 
 #front_page_video {
 position: relative;
-padding-bottom: 56.25%;
+padding-bottom: 46.25%;
+padding-right: 10%;
+padding-left:10%;
 padding-top: 30px; height: 0; overflow: hidden;
 }
 
@@ -203,13 +373,15 @@ padding-top: 30px; height: 0; overflow: hidden;
 position: absolute;
 top: 0;
 left: 0;
-width: 100%;
-height: 100%;
+width: 80%;
+height: 90%;
 }
 
 .model_div img {
 	width: 250pt;
-    border: 2em solid black;
+    border: .75em solid #194141;
+    background-color: #122f2f;
+    padding: 1.25em;
     margin: 3em;
 	float: left;
 }
@@ -228,11 +400,11 @@ height: 100%;
 }
 
 .model_div .button_left {
-	margin: 1em;
+	margin:1em;
 }
 
 .model_div .button_right {
-	margin: 1em;
+	margin:1em;
 }
 
 .model_div label {
@@ -249,19 +421,31 @@ height: 100%;
 	bottom: 0;
 }
 
+.model_div .model_buttons label {
+	background-color: #ceb7ff;
+	color: #194141;
+	padding:1%;
+	border-radius: 5px;
+}
+
+.model_div .model_buttons label:hover {
+	background-color: #bd9dff;
+}
+
+.model_div p {
+	padding-bottom: 2em;
+}
 .model_div p {
 	padding-bottom: 2em;
 }
 
-
-
 #jump2 {
-	display: none;
-	padding:0.75em;
+	/*display: none;*/
+	padding:2.5em;
 }
 #jump3 {
-	display: none;
-	padding:0.75em;
+	/*display: none;*/
+	padding:2.5em;
 }
 
 #image{
@@ -277,6 +461,38 @@ height: 100%;
     display: inline-block;
     margin-right: 10%;
     margin-left: 5%;
+}
+
+#buttons label {
+	border-radius: 5px;
+	margin: 1em;
+	margin-left: 5%; 
+	padding: 1em; 
+    background-color: #c6e2ff;
+}
+
+#buttons label:hover {
+    background-color: #add5ff;
+}
+
+#buttons4 {
+    width: 29%;
+    height: 80%;
+    display: inline-block;
+    margin-right: 10%;
+    margin-left: 5%;
+}
+
+#buttons4 label {
+	border-radius: 5px;
+	margin: 1em;
+	margin-left: 5%; 
+	padding: 1em; 
+    background-color: #c6ffff;
+}
+
+#buttons4 label:hover {
+    background-color: #adffff;
 }
 
 #layout_image_selection_buttons {
@@ -311,6 +527,20 @@ height: 100%;
 	font-size:1.5em;
 }
 
+#substep3 {
+	background: #e2ffc6;
+	color: #358b8b;
+	padding:3%;
+	font-size:1.5em;
+}
+
+#substep4 {
+	background: #ffffc6;
+	color: #358b8b;
+	padding:3%;
+	font-size:1.5em;
+}
+
 #no_results_laser_cut {
 	background: #e2ffc6;
 	color: #358b8b;
@@ -319,7 +549,7 @@ height: 100%;
 }
 
 #no_results_layout {
-	background: #e2ffc6;
+	background: #ffffc6;
 	color: #358b8b;
 	padding:3%;
 	font-size:1.5em;
@@ -340,12 +570,25 @@ height: 100%;
 #upload_map_div {
 	width: 80%;
 	margin: 0em auto !important;
+	margin-top:8em;
 	float: none !important;
 	background-color: #dfffdf;
 	padding: 0%;
-    padding-top: .1em;
+    padding-top: 0em;
     padding-bottom: 2em;
     display: none;
+}
+
+#upload_map_div label {
+	background-color: #7f4925;
+	color: #ffcfaf;
+	padding: .5em;
+	font-size: .9em;
+}
+
+#upload_map_div label:hover {
+	background-color: #99572c;
+	color: #ffcfaf;
 }
 
 #available_models_div {
@@ -354,9 +597,20 @@ height: 100%;
 	float: none !important;
 	background-color: #dfffdf;
 	padding: 0%;
-    padding-top: .1em;
+    padding-top: 0em;
     padding-bottom: 2em;
     display: none;
+}
+
+#available_models_div label {
+	background-color: #7f4925;
+	color: #ffcfaf;
+	padding: 1em;
+	font-size: 1em;
+}
+
+#available_models_div label:hover {
+	background-color: #99572c;
 }
 
 #advanced_settings_div {
@@ -368,6 +622,17 @@ height: 100%;
     padding-top: .1em;
     padding-bottom: 2em;
     display: none;
+}
+
+#advanced_settings_div label {
+	background-color: #7f412d;
+	color: #ffcfaf;
+	padding: 1em;
+	font-size: 1em;
+}
+
+#advanced_settings_div label:hover {
+	background-color: #994e36;
 }
 
 #pick_location_div {
@@ -396,20 +661,21 @@ height: 100%;
 	width: 80%;
 	margin: 0em auto !important;
 	float: none !important;
-	background-color: #efffdf;
+	background-color: #ffffdf;
 	padding: 0%;
     padding-top: .1em;
     padding-bottom: 2em;
 	display: none;
 }
 
-#description{
-	padding:1em;
-	background-color: #194141;
-	font-family: 'Quicksand', sans-serif;
-	font-size: 1.1em;
-	color: #c5e6e6;
-	font-weight: 100
+#div6 {
+	width: 80%;
+	margin: 0em auto !important;
+	float: none !important;
+	background-color: #ffffdf;
+	padding: 0%;
+    padding-top: .1em;
+    padding-bottom: 2em;
 }
 
 #instructions, #loading_text_laser_cut, #loading_text_layout {
@@ -420,7 +686,7 @@ height: 100%;
 }
 
 #loading_bar_laser_cut, #loading_bar_layout {
-	background-color: red;
+	background-color: #ff1e45;
 	height: 100%;
 }
 
@@ -556,7 +822,7 @@ img {
 
 .error_message {
     width: 100%;
-    background-color: red;
+    background-color: #ff1e45;
 }
 
 .error_message p {
