@@ -1,6 +1,6 @@
 "use strict";
 
-
+document.body.scrollTop = document.documentElement.scrollTop = 0;
 
 function show_available_models() {
     document.getElementById("available_models_div").style.display = "block";
@@ -94,6 +94,14 @@ function hide_available_models() {
     document.getElementById("available_models_div").style.display = "none";
 }
 
+function show_landing_page() {
+    document.getElementById("description_div").style.display = "block";
+}
+
+function hide_landing_page() {
+    document.getElementById("description_div").style.display = "none";
+}
+
 function show_make_your_own() {
     document.getElementById("upload_map_div").style.display = "block";
     document.getElementById("pick_location_div").style.display = "block";
@@ -118,14 +126,23 @@ function hide_make_your_own() {
 
 function click_make_your_own() {
     hide_available_models();
+    hide_landing_page();
     show_make_your_own();
-    jump_to("jump1");
+    jump_to("behind_header");
 }
 
 function click_available_models() {
     hide_make_your_own();
+    hide_landing_page();
     show_available_models();
-    jump_to("jump4");
+    jump_to("behind_header");
+}
+
+function click_landing_page() {
+    hide_make_your_own();
+    hide_available_models();
+    show_landing_page();
+    jump_to("behind_header");
 }
 
 function show_error_message(location, message) {
@@ -146,13 +163,13 @@ function jump_to(path) {
     }
 }
 
-// When the user scrolls the page, execute myFunction 
+// When the user scrolls the page, execute stickyHeader 
 window.onscroll = function() {stickyHeader()};
 
 // Add the sticky class to the header when you reach its scroll position. Remove "sticky" when you leave the scroll position
 function stickyHeader() {
     // Get the header
-    var header = document.getElementById("div1");
+    var header = document.getElementById("buffer_div");
 
     // Get the offset position of the navbar
     var sticky = header.offsetTop;
@@ -222,7 +239,7 @@ function finish_step_2() {
     }
 
     hide_error_message("upload_map");
-    hide_error_message("jump3");
+    jump_to("jump3");
 
     render_results();
 }

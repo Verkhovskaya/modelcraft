@@ -3,6 +3,12 @@
         <h1 class="step_header_strip"> Step 2: Choose a location </h1>
         <p id="subheader"> </p>
         <p id="substep2"> Pick the map section you want to create. </p>
+        <p id="instructions"> Open Minecraft in the map you want to create. </p>
+        <p id="extra"> Make sure you're using the correct version of minecraft! </p>
+        <p id="instructions"> Find the place on your map that you would like to turn into a real-life model </p>
+        <p id="extra"> There's no place like home. 
+            <span style="font-family: 'Krub', sans-serif"> <3 </span>
+        </p>
         <p id="instructions"> In Minecraft, hit F3, or Fn+F3, or maybe Alt+Fn+F3, to see an info screen. </p>
         <p id="extra"> Line 8 (Block: # # #) shows where you are. </p>
         <a name="select_corners">
@@ -17,22 +23,20 @@
             <form id="pick_location_form">
                 <p id="instructions"> The first corner is at: </p>
                 <p id="extra">
-                    <input id="x1" id="text_input" type="number" value="0"/>
-                    <input id="z1" id="text_input" type="number" value="0"/>
-                    <input id="y1" id="text_input" type="number" value="0"/>
+                    <input id="x1" class="text_input" type="number" value="0"/>
+                    <input id="z1" class="text_input" type="number" value="0"/>
+                    <input id="y1" class="text_input" type="number" value="0"/>
                 </p>
                 <br/>
                 <p id="instructions"> The corner on the other side (including upwards!) is at: </p>
                 <p id="extra">
-                    <input id="x2" id="text_input" type="number" value="10"/>
-                    <input id="z2" id="text_input" type="number" value="10"/>
-                    <input id="y2" id="text_input" type="number" value="10"/>
+                    <input id="x2" class="text_input" type="number" value="10"/>
+                    <input id="z2" class="text_input" type="number" value="10"/>
+                    <input id="y2" class="text_input" type="number" value="10"/>
                 </p>
                 <br/>
             </form>
         </a>
-
-
         <button id="continue2" onclick="finish_step_2()">Render</button>
         <div id="jump3"></div>
     </div>
