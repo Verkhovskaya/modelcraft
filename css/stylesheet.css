@@ -155,7 +155,7 @@ input {
     color: #194141;
     font-family: 'Quicksand', sans-serif;
     font-weight: 100;
-	padding-top: 1em;
+	padding-top: 0.6em;
 	padding-right: 2em;
 }
 
@@ -388,7 +388,6 @@ height: 90%;
 
 .model_div {
 	overflow: auto;
-	position: relative;
 }
 
 .model_div h1 {
@@ -417,7 +416,6 @@ height: 90%;
 }
 
 .model_div .model_buttons {
-	position: relative;
 	bottom: 0;
 }
 
